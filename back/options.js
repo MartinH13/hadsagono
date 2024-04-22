@@ -1,6 +1,5 @@
 const express = require('express');
 let createError = require('http-errors');
-let express = require('express');
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
@@ -24,6 +23,11 @@ const sessinfo = {
     saveUninitialized: true
 };
 app.use(session(sessinfo));
+
+// No deberiamos necesitar vistas (ejs), pero por si acaso lo dejo aqui
+// se pueden crear en la carpeta views
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 
 let apiRouter= require('./api');
