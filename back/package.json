@@ -1,0 +1,15 @@
+{
+  "name": "hadsagono-back",
+  "version": "1.0.0",
+  "description": "Back-end for Single and Multi Player Hexa Game",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hads",
+    "hexagon"
+  ],
+  "author": "Nicolas Aguado, Martin Horsfield, Asier Contreras",
+  "license": "UNLICENSED"
+}
