@@ -4,12 +4,21 @@
   "description": "Back-end for Single and Multi Player Hexa Game",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server.js"
   },
   "keywords": [
     "hads",
     "hexagon"
   ],
   "author": "Nicolas Aguado, Martin Horsfield, Asier Contreras",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "debug": "^4.3.4",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "http-errors": "^2.0.0",
+    "nodemon": "^3.1.0"
+  }
 }
