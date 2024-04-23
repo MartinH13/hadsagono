@@ -1,0 +1,90 @@
+.board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+  }
+ h1{
+    color: #646cff;
+    font-size: 3.2em;
+    line-height: 1.1;
+    padding-bottom: 30px;
+  }
+  .board-row {
+    display: flex;
+    justify-content: center;
+    margin-top: -20px;
+   
+  }
+  
+  .hexagon {
+    position: relative;
+    width: 60px;
+    height: 34.64px;
+    background-color: #ccc;
+    margin: 10px 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    transform: rotate(90deg);
+    
+  }
+  
+ 
+  .hexagon:before,
+  .hexagon:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+  }
+  
+  .hexagon:before {
+    bottom: 100%;
+    border-bottom: 17.32px solid #ccc;
+    
+  }
+  
+  .hexagon:after {
+    top: 100%;
+    border-top: 17.32px solid #ccc;
+  }
+  
+  .hexagon:hover {
+    transform: scale(1.1);
+    z-index: 1;
+    transform: rotate(90deg);
+  
+
+  }
+  
+  .hexagon.empty {
+    background-color: transparent;
+    cursor: default;
+  }
+  
+  .hexagon.empty:before {
+    border-bottom: 17.32px solid transparent;
+  }
+  
+  .hexagon.empty:after {
+    border-top: 17.32px solid transparent;
+  }
+  
+  .hexagon.odd-col {
+    margin-top: 50px;
+    
+   
+  }
+  .hexagon span {
+    transform: rotate(-90deg);
+  }
+  .line-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
