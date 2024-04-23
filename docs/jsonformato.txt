@@ -11,11 +11,8 @@
 }
 
 {
-   "node-start": [i,j]
-   "nodes": [[k,l],[a,b]]
-   "node-end": [m,n]
+   "nodes": [[k,l],[a1,b1],[a2,b2]]
 }
 
-{
-   "nodes": [[ k,l],[a,b]]
-}
+[k,l] siendo la posición inicial
+[ax,bx] siendo los movimientos posteriores

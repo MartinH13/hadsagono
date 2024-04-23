@@ -1,11 +1,4 @@
 class Functions {
-    static myStaticMethod() {
-        // Code for the static method
-    }
-
-    static anotherStaticMethod() {
-        // Code for another static method
-    }
 
     // static possibleMoves = {
     //     "0,0" : [m.e, m.s],
@@ -144,6 +137,35 @@ class Functions {
         }
         return arr;
     }
+
+    static verifier2000(moves) {
+        //La función ha recibido un JSON que contiene la posición inicial y los movimientos que se realizan
+        
+        //TODO Tenemos que tener un JSON con los movimientos legales
+
+        //TODO Hay que comprobar que hay al menos 3 arrays en el JSON
+        if (moves.length < 3) {
+            
+        }
+
+        //La posición actual será la primera
+        currentPosition = moves.nodes[0];
+
+        //Recorremos el array de movimientos
+        for (let i = 1; i < moves.nodes.length; i++) {
+
+            //TODO Se comprueba que es válido
+            //Habrá que pasar el valor a i + "," + j
+            currentPosition, moves.nodes[i]
+
+            //Si es válido, actualizamos la posición actual
+            currentPosition = moves.nodes[i];
+        }
+
+        //TODO se pone todo en marcha
+
+    }
+
 }
 
 module.exports = Functions;
