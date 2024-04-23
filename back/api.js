@@ -1,5 +1,6 @@
 let express = require('express');
 let router = express.Router();
+let functions = require('./functions.js');
 
 /**
  * Ruta simple para ver si funciona el auth : GET /auth
@@ -7,5 +8,6 @@ let router = express.Router();
 router.get('/', function (req, res) {
     res.send('200 OK - API.js router works');
 });
+
 
 module.exports = router;
