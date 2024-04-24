@@ -15,7 +15,7 @@
 }
 
 [k,l] siendo la posición inicial
-[ax,bx] siendo los movimientos posteriores
+[ax,bx] siendo los movimientos posteriores (estan entre -1 y 1)
 
 
 

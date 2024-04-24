@@ -1,6 +1,6 @@
 let express = require('express');
 let router = express.Router();
-let functions = require('./functions.js');
+let board = require('./board.js');
 
 /**
  * Ruta simple para ver si funciona el auth : GET /auth

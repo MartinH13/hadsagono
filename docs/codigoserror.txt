@@ -1,0 +1,17 @@
+Códigos de error internos de la aplicación
+
+100 = TODO BIEN
+
+Genericos:
+----
+201 = Objeto no es de tipo JSON
+
+Especifico movimientos:
+------
+251 = El json de movimientos no tiene un objeto "nodes"
+252 = El objeto "nodes" del json no es un array
+253 = Alguno de los elementos en "nodes" no es un número
+254 = Alguno de los elementos en "nodes" después del primero no está entre -1 y 1
+255 = Los movimientos tienen que ser de mínimo 3 hexágonos
+256 = Se ha intentado hacer un movimiento ilegal (nodos no conectados)
+257 = Movimiento ilegal (se están conectando dos números distintos)
