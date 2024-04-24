@@ -65,8 +65,10 @@ const Board = () => {
    
     <div className="board" onMouseLeave={handleMouseUp}>
       <h1 className='title' >HADSAGONO</h1>
+      <div className='container'>
       {boardData.board.map((row, rowIndex) => (
-        <div key={rowIndex} className="board-row">
+        
+        <div key={rowIndex} className="board-row" >
           {row.map((value, colIndex) => (
             <div
               key={`${rowIndex}-${colIndex}`}
@@ -84,7 +86,9 @@ const Board = () => {
             </div>
           ))}
         </div>
+        
       ))}
+      </div>
       <div className="selected-hexagons">
         <h3>Selected Hexagons:</h3>
         <ul>

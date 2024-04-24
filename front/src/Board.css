@@ -5,16 +5,25 @@
     margin-top: 40px;
   }
  h1{
-    color: #646cff;
+    color: #bbada0;
     font-size: 3.2em;
     line-height: 1.1;
     padding-bottom: 30px;
   }
+
   .board-row {
     display: flex;
     justify-content: center;
     margin-top: -20px;
+
    
+  }
+  .container{
+    background-color: #bbada0;
+    padding: 50px 40px 0px 40px;  
+    border-radius: 10px;  
+    border: 15px solid gray;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
   }
  
   
@@ -30,7 +39,7 @@
     transition: transform 0.2s;
     transform: rotate(90deg);
     user-select: none; 
-    
+     
   }
   
  
