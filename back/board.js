@@ -1,3 +1,5 @@
+let Utils = require('./utils.js');
+
 class Board {
 
     board;
@@ -38,7 +40,7 @@ class Board {
             "score": 0
         };
         
-        let pos = [2,4,8,16];
+        let pos = [2,4,8,2,2,16,4,2];
 
         for (let i = 0; i < rows; i++) {
             let row = [];
@@ -52,13 +54,13 @@ class Board {
                     row.push(16);
                 // Bottom half
                 } else if (i > rows / 2) {
-                    row.push(pos[Math.floor(Math.random() * 2)]);
+                    row.push(pos[Math.floor(Math.random() * 5)]);
                 // Bottom top
                 } else if (i < rows / 2) {
-                    row.push(pos[Math.floor(Math.random() * 2)]);
+                    row.push(pos[Math.floor(Math.random() * 5)]);
                 // Middle row
                 } else {
-                    row.push(pos[Math.floor(Math.random() * 3)]);
+                    row.push(pos[Math.floor(Math.random() * 7)]);
                 }
             }
             b.board.push(row);
@@ -184,19 +186,17 @@ class Board {
         }
 
         //La posición actual será la primera
-        let currentPosition = moves.nodes[0];
-        let num = this.board.board[currentPosition[0]][currentPosition[1]];
+        let currentPositionX = moves.nodes[0][0];
+        let currentPositionY = moves.nodes[0][1];
+        let num = this.board.board[currentPositionX][currentPositionY];
         
         //Recorremos el array de movimientos
         for (let i = 1; i < moves.nodes.length; i++) {
 
             //Habrá que pasar el valor a i + "," + j
-            let curPosString = currentPosition[0] + "," + currentPosition[1];
+            let curPosString = currentPositionX + "," + currentPositionY;
 
             // Comprobamos si el movimiento es válido (nodo a nodo)
-            if (!this.possibleMoves[curPosString].includes(moves.nodes[i])) {
-                return 256;
-            }
             let found = false;
             for (let j = 0; j < this.possibleMoves[curPosString].length; j++) {
                 if (this.possibleMoves[curPosString][j][0] == moves.nodes[i][0] && this.possibleMoves[curPosString][j][1] == moves.nodes[i][1]) {
@@ -208,13 +208,13 @@ class Board {
             if (!found) return 256;
 
             // Comprobamos si estamos moviendonos dentro del mismo numero
-            if (this.board.board[currentPosition[0]][currentPosition[1]] != num) {
+            if (this.board.board[currentPositionX][currentPositionY] != num) {
                 return 257;
             }
 
             //Si es válido, actualizamos la posición actual
-            currentPosition[0] += moves.nodes[i][0];
-            currentPosition[1] += moves.nodes[i][1];
+            currentPositionX += moves.nodes[i][0];
+            currentPositionY += moves.nodes[i][1];
         }
 
         return 100;
@@ -229,7 +229,7 @@ class Board {
         let res = this.verifier2000(moves);
         if (res != 100) return res;
 
-        // por si acaso backup
+        // por si acaso backup - puede venirnos util más tarde
         let oldboard = JSON.parse(JSON.stringify(this.board));
 
         // Guardamos el numero del que partimos
@@ -237,30 +237,33 @@ class Board {
 
         // Recorremos paso a paso los movimientos y rellenamos de -2
         // los hexágonos que se van a eliminar (excepto el ultimo);
-        let pos = nodes.moves[0];
-        for (let i = 0; i < moves.nodes.length -1; i++) {
-            this.board.board[pos[0]][pos[1]] = -2;
+        let posX = moves.nodes[0][0];
+        let posY = moves.nodes[0][1];
+        for (let i = 1; i < moves.nodes.length; i++) {
+            this.board.board[posX][posY] = -2;
             
-            pos[0] += moves.nodes[i][0];
-            pos[1] += moves.nodes[i][1];
+            posX += moves.nodes[i][0];
+            posY += moves.nodes[i][1];
         }
         // En el ultimo hexagono ponemos el nuevo numero
-        this.board.board[pos[0]][pos[1]] = num * Math.pow(2, Math.floor(moves.nodes.length / 3));
+        this.board.board[posX][posY] = num * Math.pow(2, Math.floor(moves.nodes.length / 3));
 
-        // Vamos recorriendo los -2 y "bajamos el resto de numeros"
-        // poniendo un -3 en los que se han movido
+
+        // efecto de gravedad -- bajamos los -numeros
+        this.board.board = Utils.applyGravity(this.board.board);
+
+        // reemplazamos los -3 con numeros aleatorios
+        let values = [16,4,8,2,2];
         for (let i = 0; i < this.board.board.length; i++) {
             for (let j = 0; j < this.board.board[i].length; j++) {
-                if (this.board.board[i][j] == -2) {
-                    let k = i;
-                    while (k > 0 && this.board.board[k-1][j] > 0) {
-                        this.board.board[k][j] = this.board.board[k-1][j];
-                        this.board.board[k-1][j] = -3;
-                        k--;
-                    }
+                if (this.board.board[i][j] == -3) {
+                    this.board.board[i][j] = values[Math.floor(Math.random() * 4)];
                 }
             }
         }
+
+        // por ultimo, actualizamos score del jugador
+        this.score += num * 3;
 
         return 100;
     }
