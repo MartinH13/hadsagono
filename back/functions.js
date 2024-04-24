@@ -1,52 +1,10 @@
+// Yo haría que esta clase se llamase Board y que haga todas las funciones importantes del codigo
 class Functions {
 
-    // static possibleMoves = {
-    //     "0,0" : [m.e, m.s],
-    //     "0,1" : [m.n, m.ne, m.e, m.s],
-    //     "0,2" : [m.n, m.ne, m.e, m.s],
-    //     "0,3" : [m.n, m.ne, m.e, m.s],
-    //     "0,4" : [m.n, m.ne, m.e, m.s],
-    //     "0,5" : [m.n, m.ne],
-
-    //     "1,0" : [m.e, m.se, m.s, m.sw, m.w],
-    //     "1,1" : [m.n, m.e, m.se, m.s, m.sw, m.w],
-    //     "1,2" : [m.n, m.e, m.se, m.s, m.sw, m.w],
-    //     "1,3" : [m.n, m.e, m.se, m.s, m.sw, m.w],
-    //     "1,4" : [m.n, m.e, m.se, m.sw, m.w],
-
-    //     "2,0" : [m.e, m.s, m.w],
-    //     "2,1" : [m.n, m.ne, m.e, m.s, m.w, m.nw],
-    //     "2,2" : [m.n, m.ne, m.e, m.s, m.w, m.nw],
-    //     "2,3" : [m.n, m.ne, m.e, m.s, m.w, m.nw],
-    //     "2,4" : [m.n, m.ne, m.e, m.s, m.w, m.nw],
-    //     "2,5" : [m.n, m.ne, m.nw],
-
-    //     "3,0" : [m.e, m.se, m.s, m.sw, m.w],
-    //     "3,1" : [m.n, m.e, m.se, m.s, m.sw, m.w],
-    //     "3,2" : [m.n, m.e, m.se, m.s, m.sw, m.w],
-    //     "3,3" : [m.n, m.e, m.se, m.s, m.sw, m.w],
-    //     "3,4" : [m.n, m.e, m.se, m.sw, m.w],
-
-    //     "4,0" : [m.s, m.w],
-    //     "4,1" : [m.n, m.s, m.w, m.nw],
-    //     "4,2" : [m.n, m.s, m.w, m.nw],
-    //     "4,3" : [m.n, m.s, m.w, m.nw],
-    //     "4,4" : [m.n, m.s, m.w, m.nw],
-    //     "4,5" : [m.n, m.nw]
-
-    // }
-
-    // siendo i la columna y j la fila
-    // static m = {
-    //     n : [0,-1],
-    //     ne : [1,-1],
-    //     e : [1,0],
-    //     se : [1,1],
-    //     s : [0,1],
-    //     sw : [-1,1],
-    //     w : [-1,0],
-    //     nw : [-1,-1],
-    // }
+    //Al final lo vamos a hacer estático?
+    constructor() {
+        this.possibleMoves = Functions.generatePossibleMoves(5, 6);
+    }
 
     // siendo i la fila y j la columna
     static m = {
@@ -141,11 +99,34 @@ class Functions {
     static verifier2000(moves) {
         //La función ha recibido un JSON que contiene la posición inicial y los movimientos que se realizan
         
-        //TODO Tenemos que tener un JSON con los movimientos legales
+        //Para cada false, habrá que devolver un mensaje 2xx pero de error 
+
+        // Check if the variable is a JSON object
+        if (typeof moves !== 'object' || moves === null || Array.isArray(moves)) {
+            return false;
+        }
+
+        // Check if the JSON object has a key called "nodes"
+        if (!moves.hasOwnProperty('nodes')) {
+            return false;
+        }
+
+        // Check if "nodes" is an array
+        if (!Array.isArray(moves.nodes)) {
+            return false;
+        }
+
+        // Check if each element in "nodes" is an array of two integers
+        for (let i = 0; i < moves.nodes.length; i++) {
+            const node = moves.nodes[i];
+            if (!Array.isArray(node) || node.length !== 2 || !Number.isInteger(node[0]) || !Number.isInteger(node[1])) {
+                return false;
+            }
+        }
 
         //TODO Hay que comprobar que hay al menos 3 arrays en el JSON
         if (moves.length < 3) {
-            
+            return false;
         }
 
         //La posición actual será la primera
@@ -156,15 +137,21 @@ class Functions {
 
             //TODO Se comprueba que es válido
             //Habrá que pasar el valor a i + "," + j
-            currentPosition, moves.nodes[i]
+            curPosString = currentPosition[0] + "," + currentPosition[1];
+            if (!possibleMoves[curPosString].includes(moves.nodes[i])) {
+                return false;
+            }
 
             //Si es válido, actualizamos la posición actual
             currentPosition = moves.nodes[i];
         }
 
         //TODO se pone todo en marcha
-
     }
+
+    //Función a la que se llama con un array de coordenadas. Esos son los hexagonos
+    //sobre los que se tiene que ejecutar la acción.
+    static executeMove
 
 }
 
