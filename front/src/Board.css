@@ -16,12 +16,12 @@
     margin-top: -20px;
    
   }
+ 
   
   .hexagon {
     position: relative;
     width: 60px;
     height: 34.64px;
-    background-color: #ccc;
     margin: 10px 5px;
     display: flex;
     justify-content: center;
@@ -29,6 +29,7 @@
     cursor: pointer;
     transition: transform 0.2s;
     transform: rotate(90deg);
+    user-select: none; 
     
   }
   
@@ -44,13 +45,13 @@
   
   .hexagon:before {
     bottom: 100%;
-    border-bottom: 17.32px solid #ccc;
+    border-bottom: 17.32px solid var(--hexagon-color);
     
   }
   
   .hexagon:after {
     top: 100%;
-    border-top: 17.32px solid #ccc;
+    border-top: 17.32px solid var(--hexagon-color);
   }
   
   .hexagon:hover {

@@ -73,7 +73,9 @@ const Board = () => {
               className={`hexagon ${value === -1 ? 'empty' : ''} ${
                 colIndex % 2 === 1 ? 'odd-col' : ''
               }`}
-              style={{ backgroundColor: getHexagonColor(value) }}
+              style={{ backgroundColor: getHexagonColor(value),
+                '--hexagon-color': getHexagonColor(value)
+               }}
               onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
               onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
               onMouseUp={handleMouseUp}
