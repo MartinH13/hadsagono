@@ -8,7 +8,7 @@ class DataAccess{
     static save(board, score, movecount, code){
         //Check if the code exists in the db
         if(DataAccess.codeExists(code))
-            db.boards.update({ code: code }, { board: board, score: score, movecount: movecount });
+            db.boards.update({ "code": code }, { "board": board, "score": score, "movecount": movecount });
 
         return 100;
     }

@@ -15,7 +15,7 @@ router.get('/new', (req, res) => {
         "code": b.code
     };
     req.session.game = b;
-    let dbstatus = db.save(b.board, b.score, b.code);
+    let dbstatus = db.save(b.board, b.score, b.movecount, b.code);
     if (dbstatus !== 100) {
         res.send({"error": 777})
     }
@@ -28,17 +28,18 @@ router.get('/load/:code', (req, res) => {
     // if game is an integer, error code is returned
     if (typeof game === 'number') {
         switch (game) {
-            case 404:
-                res.status(404).send("Game not found");
+            case 281:
+                res.send({"error": 281});
                 break;
-            case 500:
-                res.status(500).send("Internal server error");
+            case 282:
+                res.send({"error": 282});
                 break;
         }
+        return;
     }
 
     // everything good, load game
-    let b = new Board(, );
+    let b = new Board({"board" : game.board, "score": game.score, "movecount": game.movecount} ,code);
 });
 
 
