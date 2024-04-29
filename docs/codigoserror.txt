@@ -15,3 +15,8 @@ Especifico movimientos:
 255 = Los movimientos tienen que ser de mínimo 3 hexágonos
 256 = Se ha intentado hacer un movimiento ilegal (nodos no conectados)
 257 = Movimiento ilegal (se están conectando dos números distintos)
+
+Errores de dataAccess:
+------
+281 = Al hacer 'load', el codigo no existe en la BD
+282 = Ha habido un error en la petición al API de generación de código
