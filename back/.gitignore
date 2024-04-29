@@ -17,3 +17,5 @@ node_modules
 .wwebjs_auth
 
 test.js
+
+.env

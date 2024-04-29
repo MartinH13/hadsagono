@@ -18,9 +18,15 @@
 }
 -------------------------------------------
 Siendo AAAAA un código UNICO de juego
-Siendo possibleMoves la primera clave "i,j" (nodo) y después un array de posibles direcciones.
+Siendo possibleMoves la primera clave "i,j" (nodo) y después un array de posibles direcciones
 Si ha habido un error al generar la matriz devolverá {"error": code}, donde code será un código de error dentro de codigoserror.txt
+La primera vez se mandará:
+- possibleMoves
+- code
+El resto de veces NO
 -------------------------------------------
+
+
 {
    "nodes": [[k,l],[a1,b1],[a2,b2]]
 }
