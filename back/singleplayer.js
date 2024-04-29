@@ -4,22 +4,31 @@ let Board = require('./board.js');
 let db = require('./dataAccess.js');
 
 router.get('/new', (req, res) => {
-    // generate new code for the game
-    let code = db.generateCode();
-    // for the moment, 6 rows and 5 columns
-    let b = new Board({"columns": 5, "rows" : 6}, code);
-    let resjson = {
-        "board": b.board.board,
-        "score": b.score,
-        "possibleMoves": b.possibleMoves,
-        "code": b.code
-    };
-    req.session.game = b;
-    let dbstatus = db.save(b.board, b.score, b.movecount, b.code);
-    if (dbstatus !== 100) {
-        res.send({"error": 777})
-    }
-    res.send(resjson);
+    // generate new code for the game.
+    db.generateCode()
+        .then(code => {
+            console.log("Code: " + code);
+            // for the moment, 6 rows and 5 columns
+            let b = new Board({"columns": 5, "rows" : 6}, code);
+            let resjson = {
+                "board": b.board.board,
+                "score": b.score,
+                "possibleMoves": b.possibleMoves,
+                "code": b.code
+            };
+            req.session.game = b;
+            let dbstatus = db.save(b.board, b.score, b.movecount, b.code);
+            if (dbstatus !== 100) {
+                res.send({"error": 777})
+            }
+            res.send(resjson);
+            return;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            return 202;
+        });
+    
 });
 
 router.get('/load/:code', (req, res) => {
