@@ -38,7 +38,7 @@ class DataAccess{
         }
       }
 
-    static load(code){
+    static async load(code){
         //Check if the code exists in the db
         if(!DataAccess.codeExists(code))
             return 281;
@@ -52,7 +52,7 @@ class DataAccess{
           const response = await fetch('https://random-word-api.herokuapp.com/word?length=5');
           const data = await response.json();
           console.log("Generated code:" + data);
-          return data;
+          return data[0];
 
           //La función recursiva está dando problemas
           /*
