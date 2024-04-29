@@ -20,9 +20,9 @@ class Board {
         this.code = code;
 
         if (game.columns && game.rows) {
-            this.rows = rows;
-            this.cols = columns;
-            this.board = this.generateInitialBoard(rows, columns);
+            this.rows = game.rows;
+            this.cols = game.columns;
+            this.board = this.generateInitialBoard(game.rows, game.columns);
             this.score = 0;
             this.movecount = 0;
         } else if (game.board && game.score && game.movecount) {
@@ -59,10 +59,7 @@ class Board {
 
     // Given the number of rows and columns, generate (randomly) the initial board
     generateInitialBoard(rows, cols) {
-        let b = {
-            "board": [],
-            "score": 0
-        };
+        let b = [];
         
         let pos = [2,4,8,2,2,16,4,2];
 
@@ -87,14 +84,14 @@ class Board {
                     row.push(pos[Math.floor(Math.random() * 7)]);
                 }
             }
-            b.board.push(row);
+            b.push(row);
         }
 
         // (rows / 2) - 1 times random 8 hexagon spots
         for (let z = 0; z < (rows / 2) - 1; z++) {
             let x = Math.floor(Math.random() * rows);
             let y = Math.floor(Math.random() * cols);
-            b.board[x][y] = 8;
+            b[x][y] = 8;
         }
 
         return b;
@@ -107,8 +104,8 @@ class Board {
         let arr = {};
         let m = Board.m;
         
-        rows = this.rows; 
-        cols = this.cols;
+        let rows = this.rows; 
+        let cols = this.cols;
 
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
@@ -215,7 +212,7 @@ class Board {
         //La posición actual será la primera
         let currentPositionX = moves.nodes[0][0];
         let currentPositionY = moves.nodes[0][1];
-        let num = this.board.board[currentPositionX][currentPositionY];
+        let num = this.board[currentPositionX][currentPositionY];
         
         //Recorremos el array de movimientos
         for (let i = 1; i < moves.nodes.length; i++) {
@@ -235,7 +232,7 @@ class Board {
             if (!found) return 256;
 
             // Comprobamos si estamos moviendonos dentro del mismo numero
-            if (this.board.board[currentPositionX][currentPositionY] != num) {
+            if (this.board[currentPositionX][currentPositionY] != num) {
                 return 257;
             }
 
@@ -260,31 +257,31 @@ class Board {
         let oldboard = JSON.parse(JSON.stringify(this.board));
 
         // Guardamos el numero del que partimos
-        let num = this.board.board[moves.nodes[0][0]][moves.nodes[0][1]];
+        let num = this.board[moves.nodes[0][0]][moves.nodes[0][1]];
 
         // Recorremos paso a paso los movimientos y rellenamos de -2
         // los hexágonos que se van a eliminar (excepto el ultimo);
         let posX = moves.nodes[0][0];
         let posY = moves.nodes[0][1];
         for (let i = 1; i < moves.nodes.length; i++) {
-            this.board.board[posX][posY] = -2;
+            this.board[posX][posY] = -2;
             
             posX += moves.nodes[i][0];
             posY += moves.nodes[i][1];
         }
         // En el ultimo hexagono ponemos el nuevo numero
-        this.board.board[posX][posY] = num * Math.pow(2, Math.floor(moves.nodes.length / 3));
+        this.board[posX][posY] = num * Math.pow(2, Math.floor(moves.nodes.length / 3));
 
 
         // efecto de gravedad -- bajamos los -numeros
-        this.board.board = Utils.applyGravity(this.board.board);
+        this.board = Utils.applyGravity(this.board);
 
         // reemplazamos los -3 con numeros aleatorios
         let values = [16,4,8,2,2];
-        for (let i = 0; i < this.board.board.length; i++) {
-            for (let j = 0; j < this.board.board[i].length; j++) {
-                if (this.board.board[i][j] == -3) {
-                    this.board.board[i][j] = values[Math.floor(Math.random() * 4)];
+        for (let i = 0; i < this.board.length; i++) {
+            for (let j = 0; j < this.board[i].length; j++) {
+                if (this.board[i][j] == -3) {
+                    this.board[i][j] = values[Math.floor(Math.random() * 4)];
                 }
             }
         }

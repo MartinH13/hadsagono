@@ -1,5 +1,6 @@
 //import env
 require('dotenv').config();
+let mongojs = require('mongojs');
 const mongoURI = process.env.MONGO_URI;
 const db = mongojs(mongoURI, ['boards']);
 
@@ -23,10 +24,15 @@ class DataAccess{
     }
 
     static generateCode(){
-        fetch('https://random-word-api.herokuapp.com/word?length=5')
+        return fetch('https://random-word-api.herokuapp.com/word?length=5')
             .then(response => response.json())
             .then(data => {
                 console.log("Generated code:" + data);
+                //Recursive call if the code already exists
+                if (this.codeExists(data))
+                    return DataAccess.generateCode();
+                else
+                    return data;
             })
             .catch(error => {
                 // Handle any errors
@@ -34,11 +40,7 @@ class DataAccess{
                 return 282;
             });
         
-        //Recursive call if the code already exists
-        if (this.codeExists(data))
-            return DataAccess.generateCode();
-        else
-            return data;
+        
     }
 
     //Not for use outside of this class

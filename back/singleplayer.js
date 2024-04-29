@@ -5,11 +5,11 @@ let db = require('./dataAccess.js');
 
 router.get('/new', (req, res) => {
     // generate new code for the game
-    let code = db.getNewCode();
+    let code = db.generateCode();
     // for the moment, 6 rows and 5 columns
-    let b = new Board({"columns": 5, "rows" : 5}, code);
+    let b = new Board({"columns": 5, "rows" : 6}, code);
     let resjson = {
-        "board": b.board,
+        "board": b.board.board,
         "score": b.score,
         "possibleMoves": b.possibleMoves,
         "code": b.code
@@ -52,9 +52,9 @@ router.get('/load/:code', (req, res) => {
 
 router.post('/move', (req, res) => {
     let moves = req.body.moves;
-    let res = req.session.game.executeMove(moves);
-    if (res != 100) {
-        res.send({"error": res});
+    let resu = req.session.game.executeMove(moves);
+    if (resu != 100) {
+        res.send({"error": resu});
         return;
     }
     let resjson = {
