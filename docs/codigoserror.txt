@@ -20,3 +20,4 @@ Errores de dataAccess:
 ------
 281 = Al hacer 'load', el codigo no existe en la BD
 282 = Ha habido un error en la petición al API de generación de código
+777 = Error genérico base de datos

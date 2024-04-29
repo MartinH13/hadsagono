@@ -40,6 +40,34 @@ router.get('/load/:code', (req, res) => {
 
     // everything good, load game
     let b = new Board({"board" : game.board, "score": game.score, "movecount": game.movecount} ,code);
+    let resjson = {
+        "board": b.board,
+        "score": b.score,
+        "possibleMoves": b.possibleMoves,
+        "code": b.code
+    };
+    req.session.game = b;
+    res.send(resjson);
+});
+
+router.post('/move', (req, res) => {
+    let moves = req.body.moves;
+    let res = req.session.game.executeMove(moves);
+    if (res != 100) {
+        res.send({"error": res});
+        return;
+    }
+    let resjson = {
+        "board": req.session.game.board,
+        "score": req.session.game.score,
+    };
+
+    // Guardar cada 3 turnos
+    if (req.session.game.movecount % 3 === 0) {
+        db.save(req.session.game.board, req.session.game.score, req.session.game.movecount, req.session.game.code);
+    }
+
+    res.send(resjson);
 });
 
 
