@@ -5,6 +5,8 @@ class Board {
     board;
     possibleMoves;
     score;
+    rows;
+    cols;
 
     constructor(rows, columns) {
 
@@ -15,9 +17,11 @@ class Board {
             throw new Error("Rows must be even and 4 or more, columns must be odd and 3 or more");
         }
 
+        this.rows = rows;
+        this.cols = columns;
 
         this.board = this.generateInitialBoard(rows, columns);
-        this.possibleMoves = this.generatePossibleMoves(rows, columns);
+        this.possibleMoves = this.generatePossibleMoves();
         this.score = 0;
     }
 
@@ -76,13 +80,16 @@ class Board {
         return b;
     }    
 
-    // Pre: Columns must be odd and 3 or more
-    // Pre: Rows must be even and 4 or more
+    // Pre: this.cols must be odd and 3 or more
+    // Pre: this.rows must be even and 4 or more
     // Generate the array of possible moves for each hexagon
-    generatePossibleMoves(rows, cols) {
+    generatePossibleMoves() {
         let arr = {};
         let m = Board.m;
         
+        rows = this.rows; 
+        cols = this.cols;
+
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
                 let key = i + "," + j;
@@ -262,8 +269,11 @@ class Board {
             }
         }
 
-        // por ultimo, actualizamos score del jugador
+        // actualizamos score del jugador
         this.score += num * 3;
+
+        // por ultimo, regeneramos matriz de movimientos
+        this.possibleMoves = this.generatePossibleMoves();
 
         return 100;
     }

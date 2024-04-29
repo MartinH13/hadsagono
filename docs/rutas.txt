@@ -1,0 +1,1 @@
+/single/new : Crea un nuevo juego singleplayer, devuelve el primer json dentro de JSONformato

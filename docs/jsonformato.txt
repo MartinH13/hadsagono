@@ -1,3 +1,4 @@
+-------------------------------------------
 {
   "board": [
     [16, 2, 16, 2, 16],
@@ -7,13 +8,22 @@
     [4, 4, 4, 4, 4],
     [16, -1, 8, -1, 16],
   ],
-  "score": 100
+  "score": 100,
+  "code": AAAAA,
+  "possibleMoves": [
+    "0,0" : [ [1,0], [-1, 0], [0,1] ],
+    "0,1" : [ [0,1], [1,1] ],
+    ...
+  ]
 }
-
+-------------------------------------------
+Siendo AAAAA un código UNICO de juego
+Siendo possibleMoves la primera clave "i,j" (nodo) y después un array de posibles direcciones
+-------------------------------------------
 {
    "nodes": [[k,l],[a1,b1],[a2,b2]]
 }
-
+-------------------------------------------
 [k,l] siendo la posición inicial
 [ax,bx] siendo los movimientos posteriores (estan entre -1 y 1)
 

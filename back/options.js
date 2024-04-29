@@ -30,8 +30,11 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 
-let apiRouter= require('./api');
-app.use('/', apiRouter);
+let singleRouter= require('./singleplayer');
+let multiRouter= require('./multiplayer');
+
+app.use('/single', singleRouter);
+app.use('/vs', multiRouter);
 
 
 
