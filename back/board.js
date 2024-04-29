@@ -7,22 +7,42 @@ class Board {
     score;
     rows;
     cols;
+    code;
+    movecount;
 
-    constructor(rows, columns) {
+
+    constructor(game, code) {
+
+        if (!game || game ==  {}) {
+            throw new Error("Game must be provided when creating a board");
+        }
+
+        this.code = code;
+
+        if (game.columns && game.rows) {
+            this.rows = rows;
+            this.cols = columns;
+            this.board = this.generateInitialBoard(rows, columns);
+            this.score = 0;
+            this.movecount = 0;
+        } else if (game.board && game.score && game.movecount) {
+            this.board = game.board;
+            this.cols = game.board[0].length;
+            this.rows = game.board.length;
+            this.score = game.score;
+            this.movecount = game.movecount;
+        } else {
+            throw new Error("Game json object must be of compatible format");
+        }
 
         // Check just in case
-        if (rows % 2 == 1 || columns % 2 == 0) {
+        if (this.rows % 2 == 1 || this.cols % 2 == 0) {
             throw new Error("Rows must be even and 4 or more, columns must be odd and 3 or more");
-        } else if (rows < 4 || columns < 3) {
+        } else if (this.rows < 4 || this.cols < 3) {
             throw new Error("Rows must be even and 4 or more, columns must be odd and 3 or more");
         }
 
-        this.rows = rows;
-        this.cols = columns;
-
-        this.board = this.generateInitialBoard(rows, columns);
-        this.possibleMoves = this.generatePossibleMoves();
-        this.score = 0;
+        this.possibleMoves = this.generatePossibleMoves(); 
     }
 
     // siendo i la fila y j la columna
@@ -272,8 +292,8 @@ class Board {
         // actualizamos score del jugador
         this.score += num * 3;
 
-        // por ultimo, regeneramos matriz de movimientos
-        this.possibleMoves = this.generatePossibleMoves();
+        // por ultimo, actualizamos los posibles movimientos
+        this.movecount++;
 
         return 100;
     }

@@ -1,1 +1,4 @@
-/single/new : Crea un nuevo juego singleplayer, devuelve el primer json dentro de JSONformato
+Rutas de backend:
+
+/single/new : Crea un nuevo juego singleplayer, devuelve el primer json dentro de JSONformato con todo (board, score, possiblemoves, code)
+
