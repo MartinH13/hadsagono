@@ -75,6 +75,10 @@ router.post('/move', async (req, res) => {
     res.send(resjson);
 });
 
+router.get('/check', (req, res) => {
+    res.send(req.session.game.code);
+});
+
 
 
 module.exports = router;
