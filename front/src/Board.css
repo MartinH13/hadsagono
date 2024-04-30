@@ -39,9 +39,51 @@
     transition: transform 0.2s;
     transform: rotate(90deg);
     user-select: none; 
+    font-weight: bold;
+    font-size: 20px;
      
   }
   
+ 
+  
+  @keyframes zoomIn {
+    0% {
+      transform: scale(1) rotate(90deg);
+    }
+    100% {
+      transform: scale(1.2) rotate(90deg);
+    }
+  }
+  
+  .hexagon.selected,
+  .hexagon.selected:before,
+  .hexagon.selected:after {
+    /* Estilos para el hover */
+    animation: zoomIn 0.3s ease-in-out;
+    animation-fill-mode: forwards;
+    z-index: 2;
+    color: green;
+    -webkit-text-stroke: 1px rgb(5, 145, 5); 
+    text-shadow: 0 0 5px red;   
+  }
+  
+  .hexagon.selected:before {
+    border-bottom-color: var(--hexagon-color);
+    transform: rotate(0deg)!important;
+  }
+  
+  .hexagon.selected:after {
+    border-top-color: var(--hexagon-color);
+    transform: rotate(0deg)!important;
+  }
+  
+  .hexagon.selected span {
+    transform: rotate(-90deg) scale(1.2);
+  }
+
+/* ... (mantén los estilos anteriores) ... */
+
+
  
   .hexagon:before,
   .hexagon:after {
