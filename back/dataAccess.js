@@ -2,7 +2,8 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const mongoURI = process.env.MONGO_URI;
+//const mongoURI = process.env.MONGO_URI;
+const mongoURI = "***REMOVED***"
 
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
@@ -52,7 +53,7 @@ class DataAccess {
     if (!(await DataAccess.codeExists(code))) return 281;
 
     // If it exists, return the board and score
-    return Board.findOne({ code: code });
+    return await Board.findOne({ code: code });
   }
 
   static async generateCode() {

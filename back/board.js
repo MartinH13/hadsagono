@@ -20,18 +20,21 @@ class Board {
         this.code = code;
 
         if (game.columns && game.rows) {
+            console.log(game)
             this.rows = game.rows;
             this.cols = game.columns;
             this.board = this.generateInitialBoard(game.rows, game.columns);
             this.score = 0;
             this.movecount = 0;
-        } else if (game.board && game.score && game.movecount) {
+        } else if (typeof game.board !== 'undefined' && typeof game.score !== 'undefined' && typeof game.movecount !== 'undefined') {
+            console.log("test2")
             this.board = game.board;
             this.cols = game.board[0].length;
             this.rows = game.board.length;
             this.score = game.score;
             this.movecount = game.movecount;
         } else {
+            console.log(game)
             throw new Error("Game json object must be of compatible format");
         }
 
