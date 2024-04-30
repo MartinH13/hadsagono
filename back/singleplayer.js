@@ -27,6 +27,7 @@ router.get('/new', async (req, res) => {
 });
 
 router.get('/load/:code', async (req, res) => {
+    console.log("Starting load")
     let code = req.params.code;
     let game = await db.load(code);
     // if game is an integer, error code is returned
