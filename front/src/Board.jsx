@@ -107,6 +107,19 @@ const Board = () => {
       setSelectedHexagons([]);
     
     }
+    else{
+      //Call backend with API. POST to localhost:3642/move with array of selectedHexagons
+      console.log(selectedHexagons);
+      const coordArray = selectedHexagons.map(obj => [obj.row, obj.col]);
+      console.log(coordArray);
+      const subtractionArray = coordArray.slice(0, -1).map(([x1, y1], index) => {
+        console.log(index);
+        const [x2, y2] = coordArray[index + 1];
+        return [x2 - x1, y2 - y1];
+      });
+      const resultArray = [coordArray[0], ...subtractionArray];
+      console.log(resultArray);
+    }
     setIsMouseDown(false);
   };
 
