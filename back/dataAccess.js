@@ -1,6 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const moment = require('moment');
 
 //const mongoURI = process.env.MONGO_URI;
 const mongoURI = "***REMOVED***"
@@ -18,7 +19,16 @@ const boardSchema = new Schema({
   code: String,
 });
 
+const backupBoardSchema = new Schema({
+  board: [],
+  score: Number,
+  movecount: Number,
+  date: { type: Date, default: Date.now },
+  code: String,
+});
+
 const Board = mongoose.model('Board', boardSchema);
+const BackupBoard = mongoose.model('BackupBoard', backupBoardSchema);
 
 class DataAccess {
   static async save(board, score, movecount, code) {
@@ -78,6 +88,49 @@ class DataAccess {
       throw error;
     }
   }
+
+  //Cleanup function. Deletes documents older than 3 days or if there's less than 3 moves
+  static async cleanup() {
+    try {
+      const threeMonthsAgo = moment().subtract(3, 'days').toDate();
+      console.log('Deleting documents older than:', threeMonthsAgo);
+
+      const result = await Board.deleteMany({
+        $or: [
+          { date: { $lt: threeMonthsAgo } }
+        ]
+      });
+
+      console.log('Deleted:', result.deletedCount);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  //Backup function. Backs up all documents to a new collection
+  static async backup() {
+    try {
+      const result = await Board.find();
+      await BackupBoard.insertMany(result);
+      console.log('Backup done');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  //Restore function. Restores all documents from the backup collection
+  static async restore(overwrite = false) {
+    try {
+      const result = await BackupBoard.find();
+      if (overwrite)
+        await Board.deleteMany();
+      await Board.insertMany(result);
+      console.log('Restore done');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
 }
 
 module.exports = DataAccess;
