@@ -94,7 +94,9 @@ class Board {
         for (let z = 0; z < (rows / 2) - 1; z++) {
             let x = Math.floor(Math.random() * rows);
             let y = Math.floor(Math.random() * cols);
-            b[x][y] = 8;
+            // check in case we are in a disabled spot
+            if (b[x][y] !== -1)
+                b[x][y] = 8;
         }
 
         return b;
