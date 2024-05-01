@@ -108,7 +108,7 @@ const Board = () => {
     
     }
     else{
-      //Call backend with API. POST to localhost:3642/move with array of selectedHexagons
+      //Call backend with API. POST to localhost:3642/single/move with array of selectedHexagons
       console.log(selectedHexagons);
       const coordArray = selectedHexagons.map(obj => [obj.row, obj.col]);
       console.log(coordArray);
@@ -119,9 +119,22 @@ const Board = () => {
       });
       const resultArray = [coordArray[0], ...subtractionArray];
       console.log(resultArray);
+      postMoves(resultArray);
     }
     setIsMouseDown(false);
   };
+
+  const postMoves = async (moves) => {
+    const response = await fetch('http://localhost:3642/single/move', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ moves })
+    });
+    const data = await response.json();
+    console.log(data);
+  }
 
   return (
    
