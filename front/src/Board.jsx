@@ -20,7 +20,10 @@ const Board = () => {
 let startGameCalled = false;
 
   const startGame = async () => {
-    const response = await fetch('http://localhost:3642/single/new');
+    const response = await fetch('http://localhost:3642/single/new', {
+      method: 'GET',
+      credentials: "include",
+    });
     const data = await response.json();
     //Tengo que hacer esta guarrada de if porque si se actualiza dos veces ni idea la verdad
    if(!startGameCalled){
@@ -147,7 +150,8 @@ let startGameCalled = false;
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ moves })
+      body: JSON.stringify({ moves }),
+      credentials: "include",
     });
     const data = await response.json();
     console.log(data);

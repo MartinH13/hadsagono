@@ -6,28 +6,28 @@ let db = require('./dataAccess.js');
 router.get('/new', async (req, res) => {
     // generate new code for the game.
     let code = await db.generateCode();
-    console.log("Code: " + code);
     // for the moment, 6 rows and 5 columns
     let b = new Board({"columns": 5, "rows" : 6}, code);
     let resjson = {
         "board": b.board,
         "score": b.score,
+        "movecount" : b.movecount,
         "possibleMoves": b.possibleMoves,
         "code": b.code
     };
-    req.session.game = b;
+    req.session.game = resjson;
     let dbstatus = await db.save(b.board, b.score, b.movecount, b.code);
     if (dbstatus !== 100) {
         res.send({"error": 777});
         return;
     }
+    console.log("Started NEW game with code: " + b.code)
     res.send(resjson);
     return;
     
 });
 
 router.get('/load/:code', async (req, res) => {
-    console.log("Starting load")
     let code = req.params.code;
     let game = await db.load(code);
     // if game is an integer, error code is returned
@@ -46,39 +46,37 @@ router.get('/load/:code', async (req, res) => {
     // everything good, load game
     let b = new Board({"board" : game.board, "score": game.score, "movecount": game.movecount} ,code);
     let resjson = {
-        "board": b.board,
-        "score": b.score,
+        "board": game.board,
+        "score": game.score,
+        "movecount" : game.movecount,
         "possibleMoves": b.possibleMoves,
         "code": b.code
     };
-    req.session.game = b;
+    req.session.game = resjson;
     res.send(resjson);
 });
 
 router.post('/move', async (req, res) => {
-    let moves = req.body.moves;
-    console.log(moves);
-    
-    console.log("game-session "+req.session.game);
-    /*
-    let resu = req.session.game.executeMove(moves);
+    let moves = {"nodes" : req.body.moves};
+    let game = req.session.game;
+    let b = new Board(game, game.code);
+    let resu = b.executeMove(moves);
     if (resu != 100) {
         res.send({"error": resu});
         return;
     }
     let resjson = {
-        "board": req.session.game.board,
-        "score": req.session.game.score,
+        "board": b.board,
+        "score": b.score,
     };
 
     // Guardar cada 3 turnos
-    if (req.session.game.movecount % 3 === 0) {
-        await db.save(req.session.game.board, req.session.game.score, req.session.game.movecount, req.session.game.code);
+    if (b.game.movecount % 3 === 0) {
+        await db.save(b.board, b.score, b.movecount, b.code);
     }
 
+    req.session.game = b;
     res.send(resjson);
-    */
-   res.send({"error": 100});
 });
 
 router.get('/check', (req, res) => {
