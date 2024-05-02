@@ -1,29 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import './Board.css';
 
-
-
-
 const Board = () => {
-  const boardData = {
-    "board": [
-      [1024, 2, 2, 2, 16],
-      [8, 2, 16, 2, 8],
-      [8, 4, 8, 4, 8],
-      [4, 16, 4, 16, 4],
-      [4, 4, 4, 4, 4],
-      [16, -1, 8, -1, 16]
-    ]
-  };
-  
-  const score = {
-    "score": 15
-  };
-
 
   const [selectedHexagons, setSelectedHexagons] = useState([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [applyStyle, setApplyStyle] = useState(false);
+
+
+  const [gameLoaded, setGameLoaded] = useState(false);
+
+
+  const [gameState, setGameState] = useState({
+    loaded: false,
+    boardData: null,
+    score: 0,
+  });
+  
+let startGameCalled = false;
+
+  const startGame = async () => {
+    const response = await fetch('http://localhost:3642/single/new');
+    const data = await response.json();
+    //Tengo que hacer esta guarrada de if porque si se actualiza dos veces ni idea la verdad
+   if(!startGameCalled){
+    setGameState({
+      loaded: true,
+      boardData: data.board,
+      score: data.score,
+    });
+    startGameCalled = true;
+  }
+  };
+  
+  useEffect(() => {
+    startGame();
+    console.log("El juego ha comenzado");
+  }, []);
+
+
+  
+ 
 
   const getHexagonColor = (value) => {
     const colors = [
@@ -47,7 +64,7 @@ const Board = () => {
   };
 
   const handleMouseDown = (rowIndex, colIndex) => {
-    const hexagon = boardData.board[rowIndex][colIndex];
+    const hexagon = gameState.boardData[rowIndex][colIndex];
     if (hexagon !== -1 && !selectedHexagons.some(hexagon => hexagon.row === rowIndex && hexagon.col === colIndex)) {
       setApplyStyle(false);
       setSelectedHexagons([{ row: rowIndex, col: colIndex, value: hexagon, selected: true }]);
@@ -56,7 +73,7 @@ const Board = () => {
   };
   const handleMouseEnter = (rowIndex, colIndex) => {
     if (isMouseDown) {
-      const hexagon = boardData.board[rowIndex][colIndex];
+      const hexagon = gameState.boardData[rowIndex][colIndex];
       if (hexagon !== -1) {
         setSelectedHexagons(prevSelectedHexagons => {
           const currentIndex = prevSelectedHexagons.findIndex(
@@ -135,14 +152,19 @@ const Board = () => {
     const data = await response.json();
     console.log(data);
   }
+  
+ 
 
   return (
    
     <div className="board" >
       <h1 className='title' >HADSAGONO</h1>
-      <h3>SCORE: {score.score}</h3>
+      {gameState.loaded ? (
+        <>
+      <h3>SCORE: {gameState.score}</h3>
       <div className={`container ${applyStyle ? 'shake' : ''}`} style={applyStyle ? { backgroundColor : '#DE7676' } : {}}>
-      {boardData.board.map((row, rowIndex) => (
+        
+      {gameState.boardData.map((row, rowIndex) => (
         
         <div key={rowIndex} className="board-row" >
           {row.map((value, colIndex) => (
@@ -176,6 +198,10 @@ const Board = () => {
           ))}
         </ul>
       </div>
+      </>
+      ) : (
+        <div>Cargando el juego...</div>
+      )}
     </div>
   );
 };

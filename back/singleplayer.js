@@ -57,6 +57,10 @@ router.get('/load/:code', async (req, res) => {
 
 router.post('/move', async (req, res) => {
     let moves = req.body.moves;
+    console.log(moves);
+    
+    console.log("game-session "+req.session.game);
+    /*
     let resu = req.session.game.executeMove(moves);
     if (resu != 100) {
         res.send({"error": resu});
@@ -73,6 +77,8 @@ router.post('/move', async (req, res) => {
     }
 
     res.send(resjson);
+    */
+   res.send({"error": 100});
 });
 
 router.get('/check', (req, res) => {
