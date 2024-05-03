@@ -32,8 +32,11 @@ let startGameCalled = false;
       boardData: data.board,
       score: data.score,
     });
-    console.log(data.board);
     startGameCalled = true;
+  
+
+  
+    console.log("BOARDS",data.board);
   }
   };
   
@@ -125,8 +128,7 @@ let startGameCalled = false;
     if(selectedHexagons.length <3){
       setTimeout(() => setApplyStyle(true), 100); // Start shaking after 1 second
       setTimeout(() => setApplyStyle(false), 700); // Reset applyStyle after 1 second
-      setSelectedHexagons([]);
-    
+
     }
     else{
       //Call backend with API. POST to localhost:3642/single/move with array of selectedHexagons
@@ -140,6 +142,8 @@ let startGameCalled = false;
       postMoves(resultArray);
     }
     setIsMouseDown(false);
+    setSelectedHexagons([]);
+
   };
 
   const postMoves = async (moves) => {
@@ -152,12 +156,15 @@ let startGameCalled = false;
       credentials: "include",
     });
     const data = await response.json();
+
     console.log(data);
-    setGameState({
+    if (data != '{"error": 256}' || data != '{"error": 257 }')  {
+      setGameState({
       loaded: true,
       boardData: data.board,
-      score: data.score,
+      score:  data.score,
     });
+  }
     //[INSERTAR DESELECCION AQUI]
   }
   

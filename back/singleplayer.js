@@ -60,25 +60,21 @@ router.post('/move', async (req, res) => {
     let moves = {"nodes" : req.body.moves};
     let game = req.session.game;
     let b = new Board(game, game.code);
-    let resu = b.executeMove(moves);
+    let resu = await b.executeMove(moves);
     if (resu != 100) {
         res.send({"error": resu});
         return;
     }
-    let resjson = {
+    let  resjson = {
         "board": b.board,
         "score": b.score,
     };
 
     // Guardar cada 3 turnos
-    /*
-    console.log(b.game);
     if 
-    (b.game.movecount % 3 === 0) {
+    (b.movecount % 3 === 0) {
         await db.save(b.board, b.score, b.movecount, b.code);
     }
-    */
-
     req.session.game = b;
     res.send(resjson);
 });
