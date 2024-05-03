@@ -295,7 +295,8 @@ class Board {
         }
 
         // actualizamos score del jugador
-        this.score += num * 3;
+        // asumimos que moves.nodes.length es >= 3
+        this.score += num * 3 * Math.floor(moves.nodes.length / 3);
 
         // por ultimo, actualizamos los posibles movimientos
         this.movecount++;
