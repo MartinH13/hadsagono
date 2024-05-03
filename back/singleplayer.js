@@ -16,6 +16,7 @@ router.get('/new', async (req, res) => {
         "code": b.code
     };
     req.session.game = resjson;
+    delete resjson.code;
     console.log("Started NEW game with code: " + b.code)
     res.send(resjson);
     return;
@@ -64,17 +65,17 @@ router.post('/move', async (req, res) => {
         res.send({"error": resu});
         return;
     }
-    let  resjson = {
+    let resjson = {
         "board": b.board,
         "score": b.score,
     };
 
-    // Guardar cada 3 turnos
-    if 
-    (b.movecount % 3 === 0) {
-        await db.save(b.board, b.score, b.movecount, b.code);
-    }
     req.session.game = b;
+    // Guardar cada 3 turnos
+    if (b.movecount % 3 === 0) {
+        await db.save(b.board, b.score, b.movecount, b.code);
+        resjson["code"] = b.code;
+    }
     res.send(resjson);
 });
 
