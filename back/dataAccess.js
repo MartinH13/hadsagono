@@ -131,6 +131,16 @@ class DataAccess {
     }
   }
 
+  //Do not call this function in production
+  static async deleteAll() {
+    try {
+      await Board.deleteMany();
+      console.log('Deleted all documents');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
 }
 
 module.exports = DataAccess;
