@@ -153,6 +153,11 @@ let startGameCalled = false;
     });
     const data = await response.json();
     console.log(data);
+    setGameState({
+      loaded: true,
+      boardData: data.board,
+      score: data.score,
+    });
   }
   
  
