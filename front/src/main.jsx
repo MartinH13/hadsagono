@@ -5,7 +5,5 @@ import Board from './Board.jsx'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
     <Board />
-  </React.StrictMode>,
 )
