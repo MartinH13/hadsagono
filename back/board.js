@@ -150,11 +150,11 @@ class Board {
                 }
                 // Upper border (odd cols)
                 else if (i == 0 && j % 2 == 1) {
-                    arr[key] = [m.e, m.se, m.w];
+                    arr[key] = [m.e, m.se, m.s, m.w, m.sw];
                 }
                 // Upper border (even cols)
                 else if (i == 0 && j % 2 == 0) {
-                    arr[key] = [m.e, m.se, m.s, m.sw, m.w];
+                    arr[key] = [m.e, m.s, m.w];
                 }
                 // Lower border (even cols)
                 else if (i == rows - 1 && j % 2 == 0) {
