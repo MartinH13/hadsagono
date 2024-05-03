@@ -71,9 +71,13 @@ router.post('/move', async (req, res) => {
     };
 
     // Guardar cada 3 turnos
-    if (b.game.movecount % 3 === 0) {
+    /*
+    console.log(b.game);
+    if 
+    (b.game.movecount % 3 === 0) {
         await db.save(b.board, b.score, b.movecount, b.code);
     }
+    */
 
     req.session.game = b;
     res.send(resjson);

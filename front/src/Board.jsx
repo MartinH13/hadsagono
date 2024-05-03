@@ -20,18 +20,19 @@ const Board = () => {
 let startGameCalled = false;
 
   const startGame = async () => {
+    //Tengo que hacer esta guarrada de if porque si se actualiza dos veces ni idea la verdad
+   if(!startGameCalled){
     const response = await fetch('http://localhost:3642/single/new', {
       method: 'GET',
       credentials: "include",
     });
     const data = await response.json();
-    //Tengo que hacer esta guarrada de if porque si se actualiza dos veces ni idea la verdad
-   if(!startGameCalled){
     setGameState({
       loaded: true,
       boardData: data.board,
       score: data.score,
     });
+    console.log(data.board);
     startGameCalled = true;
   }
   };
@@ -129,11 +130,8 @@ let startGameCalled = false;
     }
     else{
       //Call backend with API. POST to localhost:3642/single/move with array of selectedHexagons
-      console.log(selectedHexagons);
       const coordArray = selectedHexagons.map(obj => [obj.row, obj.col]);
-      console.log(coordArray);
       const subtractionArray = coordArray.slice(0, -1).map(([x1, y1], index) => {
-        console.log(index);
         const [x2, y2] = coordArray[index + 1];
         return [x2 - x1, y2 - y1];
       });
