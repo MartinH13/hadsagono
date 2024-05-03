@@ -158,6 +158,7 @@ let startGameCalled = false;
       boardData: data.board,
       score: data.score,
     });
+    //[INSERTAR DESELECCION AQUI]
   }
   
  
