@@ -36,13 +36,11 @@ let startGameCalled = false;
   
 
   
-    console.log("BOARDS",data.board);
   }
   };
   
   useEffect(() => {
     startGame();
-    console.log("El juego ha comenzado");
   }, []);
 
 
@@ -127,7 +125,7 @@ let startGameCalled = false;
   const handleMouseUp = () => {
     if(selectedHexagons.length <3){
       setTimeout(() => setApplyStyle(true), 100); // Start shaking after 1 second
-      setTimeout(() => setApplyStyle(false), 700); // Reset applyStyle after 1 second
+      setTimeout(() => setApplyStyle(false), 4000); // Reset applyStyle after 1 second
 
     }
     else{
@@ -138,7 +136,6 @@ let startGameCalled = false;
         return [x2 - x1, y2 - y1];
       });
       const resultArray = [coordArray[0], ...subtractionArray];
-      console.log(resultArray);
       postMoves(resultArray);
     }
     setIsMouseDown(false);
@@ -157,13 +154,17 @@ let startGameCalled = false;
     });
     const data = await response.json();
 
-    console.log(data);
-    if (data != '{"error": 256}' || data != '{"error": 257 }')  {
+    if (typeof data.error === 'undefined')  {
       setGameState({
       loaded: true,
       boardData: data.board,
       score:  data.score,
     });
+    
+  }else{
+    setTimeout(() => setApplyStyle(true), 100); // Start shaking after 1 second
+    setTimeout(() => setApplyStyle(false), 700); // Reset applyStyle after 1 second
+
   }
     //[INSERTAR DESELECCION AQUI]
   }
@@ -203,16 +204,7 @@ let startGameCalled = false;
         
       ))}
       </div>
-      <div className="selected-hexagons">
-        <h3>Selected Hexagons:</h3>
-        <ul>
-          {selectedHexagons.map((hexagon, index) => (
-            <li key={index}>
-              Row: {hexagon.row}, Col: {hexagon.col}, Value: {formatValue(hexagon.value)}
-            </li>
-          ))}
-        </ul>
-      </div>
+     
       </>
       ) : (
         <div>Cargando el juego...</div>
