@@ -16,11 +16,6 @@ router.get('/new', async (req, res) => {
         "code": b.code
     };
     req.session.game = resjson;
-    let dbstatus = await db.save(b.board, b.score, b.movecount, b.code);
-    if (dbstatus !== 100) {
-        res.send({"error": 777});
-        return;
-    }
     console.log("Started NEW game with code: " + b.code)
     res.send(resjson);
     return;
@@ -57,6 +52,10 @@ router.get('/load/:code', async (req, res) => {
 });
 
 router.post('/move', async (req, res) => {
+    if (req.session.game === undefined || req.session.game === null) {
+        res.send({"error": 203});
+        return;
+    }
     let moves = {"nodes" : req.body.moves};
     let game = req.session.game;
     let b = new Board(game, game.code);
@@ -80,7 +79,27 @@ router.post('/move', async (req, res) => {
 });
 
 router.get('/check', (req, res) => {
+    if (req.session.game === undefined || req.session.game === null) {
+        res.send({"error": 203});
+        return;
+    }
     res.send(req.session.game.code);
+});
+
+router.post('/save', async (req, res) => {
+    if (req.session.game === undefined || req.session.game === null) {
+        res.send({"error": 203});
+        return;
+    }
+    let game = req.session.game;
+    let dbres = await db.save(game.board, game.score, game.movecount, game.code);
+    if (dbres != 100) {
+        res.send({"error": dbres});
+        return;
+    }
+    res.send(game);
+    return;
+
 });
 
 

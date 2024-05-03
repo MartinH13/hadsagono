@@ -6,6 +6,7 @@ Genericos:
 ----
 201 = Objeto no es de tipo JSON
 202 = Error con funciones async
+203 = El usuario no tiene un juego cargado en la cache
 
 Especifico movimientos:
 ------
