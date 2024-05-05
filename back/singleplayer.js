@@ -16,15 +16,17 @@ router.get('/new', async (req, res) => {
         "code": b.code
     };
     req.session.game = resjson;
-    delete resjson.code;
+    //ESTE DELETE ES IMPORTANTE?????????????????
+    /*delete resjson.code;*/
     console.log("Started NEW game with code: " + b.code)
     res.send(resjson);
     return;
     
 });
 
-router.get('/load/:code', async (req, res) => {
+router.post('/load/:code', async (req, res) => {
     let code = req.params.code;
+    console.log("Loading game with code: " + code);
     let game = await db.load(code);
     // if game is an integer, error code is returned
     if (typeof game === 'number') {
@@ -50,6 +52,7 @@ router.get('/load/:code', async (req, res) => {
     };
     req.session.game = resjson;
     res.send(resjson);
+    
 });
 
 router.post('/move', async (req, res) => {

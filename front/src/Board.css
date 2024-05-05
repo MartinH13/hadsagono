@@ -184,3 +184,59 @@
     animation: shake 0.8s;
     animation-iteration-count: infinite;
   }
+
+  .popup {
+    position: fixed; /* Position the popup at the center of the screen */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px; /* Set a width for the popup */
+    padding: 40px;
+    background-color: #fff; /* Add a background color */
+    border-radius: 10px; /* Round the corners */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add a shadow */
+    display: flex; /* Use flexbox to center the buttons */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.popup button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 1em;
+  color: white;
+  background-color: #bbada0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%; /* Make the buttons full width */
+  text-align: center; /* Center the text */
+}
+
+.popup button:hover {
+  background-color: #EDC22E;
+}
+.popup h1 {
+  font-size: 2.5em;
+  margin-top: 10px;
+  
+}
+.popup p {
+  margin-top: 20px; /* Remove top margin */
+  margin-bottom: -20px; /* Add some bottom margin */
+}
+.popup input {
+  width: 100%; /* Full width */
+  padding: 12px 20px; /* Some padding */
+  margin: 8px 0; /* Some margin */
+  box-sizing: border-box; /* Make sure padding and width stays inside the box */
+  border: 2px solid #ccc; /* Gray border */
+  border-radius: 4px; /* Rounded borders */
+  background-color: #f8f8f8; /* Light-grey background */
+  font-size: 16px; /* Increase font size */
+  transition: 0.3s; /* Add transition for hover effect */
+}
+
+.popup input:focus {
+  border-color: #EDC22E; /* Blue border when input is focused */
+}

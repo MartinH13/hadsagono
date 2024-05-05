@@ -6,47 +6,121 @@ const Board = () => {
   const [selectedHexagons, setSelectedHexagons] = useState([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [applyStyle, setApplyStyle] = useState(false);
-
-
-  const [gameLoaded, setGameLoaded] = useState(false);
-
-
+  const [showInput, setShowInput] = useState(false); 
+  const [inputValue, setInputValue] = useState('');
   const [gameState, setGameState] = useState({
     loaded: false,
     boardData: null,
     score: 0,
+    code: null
   });
+  const [showPopup, setShowPopup] = useState(true); 
+  const [inputNull, setInputNull] = useState(false); 
+  let inputError = false;
+
+  const handleNewGame = () => {
+      startGame();  
+      setInputNull(false);
+      inputError = false;
+      setShowPopup(false); 
+  };
+
+  const handleLoadGame = () => {
+      setShowInput(true); 
+  };
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleLoad = async () => {
+    if (inputValue.length === 0) {
+      setInputNull(true);
+      setShowPopup(true);
+    } else {
+      await loadGame(inputValue);
+      if(inputError == false){
+        setInputNull(false);
+        setShowPopup(false);
+      }else{
+        setInputNull(true);
+        setShowPopup(true);
+      }
+    }
+  };
   
-let startGameCalled = false;
+  
 
   const startGame = async () => {
-    //Tengo que hacer esta guarrada de if porque si se actualiza dos veces ni idea la verdad
-   if(!startGameCalled){
     const response = await fetch('http://localhost:3642/single/new', {
       method: 'GET',
       credentials: "include",
     });
     const data = await response.json();
+    console.log("CODIGO",  data.code );
+
     setGameState({
       loaded: true,
       boardData: data.board,
       score: data.score,
+      code: data.code
     });
-    startGameCalled = true;
   
-
-  
-  }
   };
   
-  useEffect(() => {
-    startGame();
-  }, []);
+  const loadGame = async (gameCode) => {
+    console.log("GameCode", gameCode);
+    const response = await fetch(`http://localhost:3642/single/load/${gameCode}`, {
+      method: 'POST',
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ code: gameCode })
+    });
+    
+    const data = await response.json();
 
+    if ( data.error !== 281 && data.error !== 282)  {
+      setGameState({
+          loaded: true,
+          boardData: data.board,
+          score: data.score,
+          code: data.code
 
-  
+        });
+        inputError = false;
+       }else{
+       inputError = true;
+    }
+
+  };
  
+  const postMoves = async (moves) => {
+    const response = await fetch('http://localhost:3642/single/move', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ moves }),
+      credentials: "include",
+    });
+    const data = await response.json();
 
+    if (typeof data.error === 'undefined')  {
+      setGameState({
+      loaded: true,
+      boardData: data.board,
+      score:  data.score,
+      code: gameState.code
+    });
+    
+  }else{
+    setTimeout(() => setApplyStyle(true), 100); 
+    setTimeout(() => setApplyStyle(false), 700);
+
+  }
+    //[INSERTAR DESELECCION AQUI]
+  }
   const getHexagonColor = (value) => {
     const colors = [
       '#EEE4DA', '#EDE0C8', '#F2B179', '#F59563',
@@ -107,10 +181,9 @@ let startGameCalled = false;
             }
             // If the previous hexagon doesn't have the same value as the first selected hexagon, don't add it to the list
             else {
-              //DO SOME CSS CHANGE HERE
               
               setTimeout(() => setApplyStyle(true), 100);
-              setTimeout(() => setApplyStyle(false), 700); // Reset applyStyle after 1 second
+              setTimeout(() => setApplyStyle(false), 700); 
 
               setSelectedHexagons([]);
               return prevSelectedHexagons;
@@ -124,12 +197,11 @@ let startGameCalled = false;
 
   const handleMouseUp = () => {
     if(selectedHexagons.length <3){
-      setTimeout(() => setApplyStyle(true), 100); // Start shaking after 1 second
-      setTimeout(() => setApplyStyle(false), 4000); // Reset applyStyle after 1 second
+      setTimeout(() => setApplyStyle(true), 100); 
+      setTimeout(() => setApplyStyle(false), 4000); 
 
     }
     else{
-      //Call backend with API. POST to localhost:3642/single/move with array of selectedHexagons
       const coordArray = selectedHexagons.map(obj => [obj.row, obj.col]);
       const subtractionArray = coordArray.slice(0, -1).map(([x1, y1], index) => {
         const [x2, y2] = coordArray[index + 1];
@@ -142,42 +214,41 @@ let startGameCalled = false;
     setSelectedHexagons([]);
 
   };
+  return showPopup ? (
+    <>
+    <div className="popup">
+            <h1 className='title' >HADSAGONO</h1>
 
-  const postMoves = async (moves) => {
-    const response = await fetch('http://localhost:3642/single/move', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ moves }),
-      credentials: "include",
-    });
-    const data = await response.json();
+        {showInput ? (
+          <>
+                <button onClick={handleNewGame}  style={{ marginBottom: "20px" }} > Start New Game</button>
+                {inputNull ? <p style={{color: "red", marginTop: "-10px", marginBottom: "8px"}}><b>Please enter a valid game code</b></p> : null}
+                <input type="text" placeholder="Enter your game code" value={inputValue} onChange={handleInputChange}/>
+                <button onClick={handleLoad}>Load </button>
+                </>
+            ) : (
+              <>
+              <button onClick={handleNewGame}> Start New Game</button>
+              <button onClick={handleLoadGame}>Load Game</button>
+                </>
+            )}
+          <div className='credits'>
+          <p><b>Authors:</b></p>
+          <p>Nicolas Aguado</p>
+          <p>Asier Contreras</p>
+          <p>Martin Horsfield</p> 
 
-    if (typeof data.error === 'undefined')  {
-      setGameState({
-      loaded: true,
-      boardData: data.board,
-      score:  data.score,
-    });
-    
-  }else{
-    setTimeout(() => setApplyStyle(true), 100); // Start shaking after 1 second
-    setTimeout(() => setApplyStyle(false), 700); // Reset applyStyle after 1 second
-
-  }
-    //[INSERTAR DESELECCION AQUI]
-  }
-  
- 
-
-  return (
+    </div>
+    </div>
    
+    </>
+) : (
+
     <div className="board" >
       <h1 className='title' >HADSAGONO</h1>
       {gameState.loaded ? (
         <>
-      <h3>SCORE: {gameState.score}</h3>
+      <h3>SCORE: {gameState.score} || GAME CODE: {gameState.code} </h3>
       <div className={`container ${applyStyle ? 'shake' : ''}`} style={applyStyle ? { backgroundColor : '#DE7676' } : {}}>
         
       {gameState.boardData.map((row, rowIndex) => (
@@ -207,7 +278,7 @@ let startGameCalled = false;
      
       </>
       ) : (
-        <div>Cargando el juego...</div>
+        <div>Loading...</div>
       )}
     </div>
   );
