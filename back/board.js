@@ -284,12 +284,19 @@ class Board {
         // efecto de gravedad -- bajamos los -numeros
         this.board = Utils.applyGravity(this.board);
 
-        // reemplazamos los -3 con numeros aleatorios
-        let values = [16,4,8,2,2];
-        for (let i = 0; i < this.board.length; i++) {
+        // conseguimos los numeros que aparecen en el board y sus probabilidades
+        
+
+        let i;
+
+        let values = [];
+        for (i = 0; i < this.board.length; i++) {
+            values.push(Utils.selectNumberBasedOnProbs(this.board));
+        }
+        for (i = 0; i < this.board.length; i++) {
             for (let j = 0; j < this.board[i].length; j++) {
                 if (this.board[i][j] == -3) {
-                    this.board[i][j] = values[Math.floor(Math.random() * 4)];
+                    this.board[i][j] = values[Math.floor(Math.random() * this.board.length)];
                 }
             }
         }

@@ -29,6 +29,42 @@ class Utils {
         return matrix;
     }
 
+    // Given a matrix, select a number based on the probabilities of each number
+    // in the matrix. For example, if the matrix is [[1, 2, 3], [1, 2, 3], [1, 2, 3]],
+    // then the function should return 1, 2, or 3 with equal probability.
+    // Generated using Claude.ai
+    static selectNumberBasedOnProbs(matrix) {
+
+        // Flatten the matrix into a single array
+        let flattenedMatrix = matrix.flat();
+
+        // Filter out -1, -2, and -3 from the flattened array
+        let filteredMatrix = flattenedMatrix.filter(num => num !== -1 && num !== -2 && num !== -3);
+
+        // Create an array to store the numbers based on their frequency
+        let frequencyArray = [];
+
+        // Iterate over each number in the filtered matrix
+        filteredMatrix.forEach(num => {
+            // Add the number to the frequency array as many times as it appears
+            for (let i = 0; i < num; i++) {
+                frequencyArray.push(num);
+            }
+        });
+
+        // Remove the highest number from the frequency array
+        let max = Math.max(...frequencyArray);
+        frequencyArray = frequencyArray.filter(num => num !== max);
+        
+
+        // Select a random index from the frequency array
+        const randomIndex = Math.floor(Math.random() * frequencyArray.length);
+
+        // Return the number at the randomly selected index
+        return frequencyArray[randomIndex];
+    }
+
+
 }
 
 

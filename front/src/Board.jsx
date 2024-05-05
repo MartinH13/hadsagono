@@ -138,7 +138,7 @@ const Board = () => {
       const abbreviatedValue = Math.floor(value / 1000); // Redondear hacia abajo para obtener el valor abreviado
       return `${abbreviatedValue}K`;
     } else {
-      return value.toString();
+            return value.toString();
     }
   };
 
@@ -233,8 +233,9 @@ const Board = () => {
                 </>
             )}
           <div className='credits'>
+          <br />
           <p><b>Authors:</b></p>
-          <p>Nicolas Aguado</p>
+          <p>Nicolás Aguado</p>
           <p>Asier Contreras</p>
           <p>Martin Horsfield</p> 
 
@@ -268,7 +269,7 @@ const Board = () => {
             onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
             onMouseUp={handleMouseUp}
           >
-            {value !== -1 && <span className="text">{formatValue(value)}</span>}
+            {value !== -1 && value !== null && <span className="text">{formatValue(value)}</span>}
           </div>
           ))}
         </div>
