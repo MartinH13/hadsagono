@@ -7,6 +7,33 @@ const groq = new Groq({
     apiKey: process.env.GROQ_KEY1
 });
 
+router.get('/new', async (req, res) => {
+
+    // generate new code for the game.
+    let code = await db.generateCode();
+    // for the moment, 6 rows and 5 columns
+    let b = new Board({"columns": 5, "rows" : 6}, code);
+    let bia = new Board({"columns": 5, "rows" : 6}, code);
+    let resjson = {
+        "board": b.board,
+        "iaboard": bia.board,
+        "score": b.score,
+        "iascore": bia.score,
+        "movecount" : b.movecount,
+        "possibleMoves": b.possibleMoves,
+        "code": b.code
+    };
+    req.session.game = resjson;
+    // En la primera jugada no se manda el codigo
+    delete resjson.code;
+    console.log("Started new MULTIPLAYER game with code: " + b.code)
+    res.send(resjson);
+    db.cleanup(); // Hacemos cleanup de la BD con cada NEW
+    return;
+
+});
+
+
 router.get('/', (req, res) => {
     main();
     res.send("200 OK");

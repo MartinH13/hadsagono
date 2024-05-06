@@ -14,8 +14,11 @@ const boardSchema = new Schema({
   board: [],
   score: Number,
   movecount: Number,
-  date: { type: Date, default: Date.now },
   code: String,
+  ia: {type: Boolean, default: false},
+  iaboard: [{type: [], default: []}],
+  iascore : {type: Number, default: 0},
+  date: { type: Date, default: Date.now }
 });
 
 const Board = mongoose.model('Board', boardSchema);
@@ -23,7 +26,7 @@ const BackupBoard = mongoose.model('BackupBoard', boardSchema);
 
 class DataAccess {
 
-  static async save(board, score, movecount, code) {
+  static async save(board, score, movecount, code, ia = false, iaboard = [], iascore = 0) {
     try {
       // Check if the code exists in the db
       console.log("Checking if code exists: " + code);
@@ -34,12 +37,12 @@ class DataAccess {
         // If the code exists, update the document
         await TempBoard.updateOne(
           { code: code },
-          { $set: { board: board, score: score, movecount: movecount } }
+          { $set: { board: board, score: score, movecount: movecount, ia: ia, iaboard: iaboard, iascore: iascore } }
         );
         console.log("Updated board with code: " + code);
       } else {
         // If the code doesn't exist, insert a new document
-        await Board.create({ board, score, movecount, code });
+        await Board.create({ board, score, movecount, code, ia, iaboard, iascore });
         console.log("Inserted board with code: " + code);
       }
       return 100;
