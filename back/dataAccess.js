@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const moment = require('moment');
 
-//const mongoURI = process.env.MONGO_URI;
-const mongoURI = "***REMOVED***"
+const mongoURI = process.env.MONGO_URI;
 
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
@@ -19,18 +18,11 @@ const boardSchema = new Schema({
   code: String,
 });
 
-const backupBoardSchema = new Schema({
-  board: [],
-  score: Number,
-  movecount: Number,
-  date: { type: Date, default: Date.now },
-  code: String,
-});
-
 const Board = mongoose.model('Board', boardSchema);
-const BackupBoard = mongoose.model('BackupBoard', backupBoardSchema);
+const BackupBoard = mongoose.model('BackupBoard', boardSchema);
 
 class DataAccess {
+
   static async save(board, score, movecount, code) {
     try {
       // Check if the code exists in the db
@@ -40,7 +32,7 @@ class DataAccess {
 
       if (codeExists) {
         // If the code exists, update the document
-        await Board.updateOne(
+        await TempBoard.updateOne(
           { code: code },
           { $set: { board: board, score: score, movecount: movecount } }
         );
@@ -89,15 +81,16 @@ class DataAccess {
     }
   }
 
-  //Cleanup function. Deletes documents older than 3 days or if there's less than 3 moves
+  //Cleanup function. Deletes documents older than 1 month or if there's less than 3 moves
   static async cleanup() {
     try {
-      const threeMonthsAgo = moment().subtract(3, 'days').toDate();
-      console.log('Deleting documents older than:', threeMonthsAgo);
+      const oneMonthsAgo = moment().subtract(3, 'months').toDate();
+      console.log('Deleting documents older than:', oneMonthsAgo);
 
       const result = await Board.deleteMany({
         $or: [
-          { date: { $lt: threeMonthsAgo } }
+          { date: { $lt: oneMonthsAgo  } },
+          { movecount: { $lt: 3 } }
         ]
       });
 
