@@ -53,7 +53,12 @@ class Utils {
         });
 
         // Remove the highest number from the frequency array
-        let max = Math.max(...frequencyArray);
+        let max = -1;
+        frequencyArray.forEach(num => {
+            if (num > max) {
+                max = num;
+            }
+        });
         frequencyArray = frequencyArray.filter(num => num !== max);
         
 

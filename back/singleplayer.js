@@ -16,8 +16,8 @@ router.get('/new', async (req, res) => {
         "code": b.code
     };
     req.session.game = resjson;
-    //ESTE DELETE ES IMPORTANTE?????????????????
-    /*delete resjson.code;*/
+    // En la primera jugada no se manda el codigo
+    delete resjson.code;
     console.log("Started NEW game with code: " + b.code)
     res.send(resjson);
     db.cleanup(); // Hacemos cleanup de la BD con cada NEW
