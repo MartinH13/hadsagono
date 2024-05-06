@@ -20,6 +20,7 @@ router.get('/new', async (req, res) => {
     /*delete resjson.code;*/
     console.log("Started NEW game with code: " + b.code)
     res.send(resjson);
+    db.cleanup(); // Hacemos cleanup de la BD con cada NEW
     return;
     
 });
