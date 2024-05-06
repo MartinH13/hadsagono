@@ -65,6 +65,47 @@ class Utils {
     }
 
 
+    // other option: use map    
+    static findFirstSolution(matrix, movements, startRow, startCol, path = []) {
+        const rows = matrix.length;
+        const cols = matrix[0].length;
+        const currentValue = matrix[startRow][startCol];
+      
+        // Add the current position to the path
+        console.log(path);
+        console.log([startRow, startCol]);
+        if (path.includes([startRow, startCol])) {
+            return null;
+        }
+        path.push([startRow, startCol]);
+      
+        // Base case: if the path length is at least 3, return the path
+        if (path.length >= 6) {
+          return path;
+        }
+        else {
+            // Recursive case: explore possible movements
+            const possibleMoves = movements[`${startRow},${startCol}`];
+            for (const [rowDiff, colDiff] of possibleMoves) {
+            const newRow = startRow + rowDiff;
+            const newCol = startCol + colDiff;
+        
+            // Check if the new position has the same value as the current position
+            if (matrix[newRow][newCol] === currentValue) {
+            // Recursively explore the new position
+                const solution = Utils.findFirstSolution(matrix, movements, newRow, newCol, path);
+                if (solution) {
+                    return solution;
+                }
+            }
+            }
+        }
+        // If no solution is found, backtrack by removing the current position from the path
+        path.pop();
+        return null;
+      }
+
+
 }
 
 
