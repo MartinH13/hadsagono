@@ -44,6 +44,7 @@ const [pauseBtn, setPauseBtn] = useState(false);
   }
   const handleNewGame = () => {
       startGame();  
+      setWithIA(false);
       setInputNull(false);
       inputError = false;
       setShowPopup(false); 
@@ -64,6 +65,7 @@ const [pauseBtn, setPauseBtn] = useState(false);
   };
 
   const handleLoad = async () => {
+    setWithIA(false);
     if (inputValue.length === 0) {
       setInputNull(true);
       setShowPopup(true);
@@ -249,6 +251,58 @@ const [pauseBtn, setPauseBtn] = useState(false);
       }
     }
   };
+  const handleMouseDownIA = (rowIndex, colIndex) => {
+    const hexagon = gameIA.boardData[rowIndex][colIndex];
+    if (hexagon !== -1 && !selectedHexagons.some(hexagon => hexagon.row === rowIndex && hexagon.col === colIndex)) {
+      setApplyStyle(false);
+      setSelectedHexagons([{ row: rowIndex, col: colIndex, value: hexagon, selected: true }]);
+      setIsMouseDown(true);
+    }
+  };
+  const handleMouseEnterIA = (rowIndex, colIndex) => {
+    if (isMouseDown) {
+      const hexagon = gameIA.boardData[rowIndex][colIndex];
+      if (hexagon !== -1) {
+        setSelectedHexagons(prevSelectedHexagons => {
+          const currentIndex = prevSelectedHexagons.findIndex(
+            hexagon => hexagon.row === rowIndex && hexagon.col === colIndex
+          );
+          if (currentIndex !== -1) {
+            // Remove the last hexagon from the list
+            return prevSelectedHexagons.slice(0, prevSelectedHexagons.length - 1);
+          } else {
+            // Check if it's the first selected hexagon
+            if (prevSelectedHexagons.length === 0) {
+              return [
+                ...prevSelectedHexagons,
+                { row: rowIndex, col: colIndex, value: hexagon, selected: true }
+              ];
+            }
+            // Check if the previous hexagon has the same value as the first selected hexagon
+            else if (
+              prevSelectedHexagons.length > 0 &&
+              prevSelectedHexagons[0].value === hexagon
+            ) {
+              return [
+                ...prevSelectedHexagons,
+                { row: rowIndex, col: colIndex, value: hexagon, selected: true }
+              ];
+            }
+            // If the previous hexagon doesn't have the same value as the first selected hexagon, don't add it to the list
+            else {
+              
+              setTimeout(() => setApplyStyle(true), 100);
+              setTimeout(() => setApplyStyle(false), 700); 
+
+              setSelectedHexagons([]);
+              return prevSelectedHexagons;
+              
+            }
+          }
+        });
+      }
+    }
+  };
 
   const handleMouseUp = () => {
     if(selectedHexagons.length <3){
@@ -269,6 +323,7 @@ const [pauseBtn, setPauseBtn] = useState(false);
     setSelectedHexagons([]);
 
   };
+
   return showPopup ? (
     <>
     <div className="popup">
@@ -351,8 +406,8 @@ const [pauseBtn, setPauseBtn] = useState(false);
         backgroundColor: getHexagonColor(value),
         '--hexagon-color': getHexagonColor(value)
       }}
-      onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
-      onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+      onMouseDown={() => handleMouseDownIA(rowIndex, colIndex)}
+      onMouseEnter={() => handleMouseEnterIA(rowIndex, colIndex)}
       onMouseUp={handleMouseUp}
     >
       {value !== -1 && value !== null && <span className="text">{formatValue(value)}</span>}
