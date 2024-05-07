@@ -26,7 +26,7 @@ router.get('/new', async (req, res) => {
     };
     req.session.game = resjson;
     // En la primera jugada no se manda el codigo
-    delete resjson.code;
+    //delete resjson.code;
     console.log("Started new MULTIPLAYER game with code: " + b.code)
     res.send(resjson);
     db.cleanup(); // Hacemos cleanup de la BD con cada NEW

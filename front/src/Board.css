@@ -8,6 +8,7 @@
     color: #bbada0;
     font-size: 3.2em;
     line-height: 1.1;
+    margin-top: -50px;
     
   }
 
@@ -25,12 +26,15 @@
     border: 15px solid gray;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
   }
+  .containerIA{
+    margin-left: 10px;
+  }
  
   
   .hexagon {
     position: relative;
     width: 60px;
-    height: 34.64px;
+    height: 35px;
     margin: 10px 5px;
     display: flex;
     justify-content: center;
@@ -40,7 +44,8 @@
     transform: rotate(90deg);
     user-select: none; 
     font-weight: bold;
-    font-size: 20px;
+    font-size: 18px;
+    letter-spacing: -2px;
      
   }
   

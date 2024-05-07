@@ -1,4 +1,5 @@
 import React, { useState,useEffect } from 'react';
+import { FiMenu } from 'react-icons/fi';
 import './Board.css';
 
 const Board = () => {
@@ -7,6 +8,7 @@ const Board = () => {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [applyStyle, setApplyStyle] = useState(false);
   const [showInput, setShowInput] = useState(false); 
+  const [withIA, setWithIA] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [gameState, setGameState] = useState({
     loaded: false,
@@ -14,10 +16,32 @@ const Board = () => {
     score: 0,
     code: null
   });
+  const [gameIA, setGameIA] = useState({
+    loaded: false,
+    boardData: null,
+    score: 0,
+    iaBoardData: null,
+    iascore: 0,
+    code: null
+  });
+  
+const [pauseBtn, setPauseBtn] = useState(false);
   const [showPopup, setShowPopup] = useState(true); 
   const [inputNull, setInputNull] = useState(false); 
   let inputError = false;
 
+  const handlePause = () => {
+    if(pauseBtn){
+      setPauseBtn(false);
+    setShowPopup(false);
+    setShowInput(false);
+    }else{
+      setShowPopup(true);
+      setPauseBtn(true);
+      setShowInput(false);
+    }
+
+  }
   const handleNewGame = () => {
       startGame();  
       setInputNull(false);
@@ -28,6 +52,13 @@ const Board = () => {
   const handleLoadGame = () => {
       setShowInput(true); 
   };
+  const handleNewGameWithIA = () => {
+    setWithIA(true);
+    startGameWithIA();  
+    setInputNull(false);
+    inputError = false;
+    setShowPopup(false);
+  }
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
   };
@@ -64,7 +95,7 @@ const Board = () => {
       score: data.score,
       code: data.code
     });
-  
+
   };
   
   const loadGame = async (gameCode) => {
@@ -88,6 +119,7 @@ const Board = () => {
           code: data.code
 
         });
+       
         inputError = false;
        }else{
        inputError = true;
@@ -121,11 +153,34 @@ const Board = () => {
   }
     //[INSERTAR DESELECCION AQUI]
   }
+
+  const startGameWithIA = async () => {
+    const response = await fetch('http://localhost:3642/vs/new', {
+      method: 'GET',
+      credentials: "include",
+    });
+    const data = await response.json();
+    console.log("CODIGO",  data.code );
+
+   
+    setGameIA({
+      loaded: true,
+      boardData: data.board,
+      score: data.score,
+      iaBoardData: data.iaboard,
+      iascore: data.iascore,
+      code: data.code
+    });
+
+  
+  };
+
+
   const getHexagonColor = (value) => {
     const colors = [
-      '#EEE4DA', '#EDE0C8', '#F2B179', '#F59563',
-      '#F67C5F', '#F65E3B', '#EDCF72', '#EDCC61',
-      '#EDC850', '#EDC53F', '#EDC22E', '#3C3A32'
+      '#EEE4DA', '#EDCC61', '#F2B179', '#F59563',
+      '#F67C5F', '#F65E3B', '#EDCF72', '#EDE0C8',
+      '#EDC850', '#EDC53F', '#EDC22E'
     ];
     const index = Math.log2(value) - 1;
     return colors[index % colors.length];
@@ -221,19 +276,36 @@ const Board = () => {
 
         {showInput ? (
           <>
-                <button onClick={handleNewGame}  style={{ marginBottom: "20px" }} > Start New Game</button>
+           {pauseBtn ? (
+                
+          <button onClick={handlePause}> Continue</button> 
+          ):(null)}
+                <button onClick={handleNewGame}> Start New Game</button>
+                <button onClick={handleNewGameWithIA} style={{ marginBottom: "20px" }}> Start Game With IA</button>
                 {inputNull ? <p style={{color: "red", marginTop: "-10px", marginBottom: "8px"}}><b>Please enter a valid game code</b></p> : null}
                 <input type="text" placeholder="Enter your game code" value={inputValue} onChange={handleInputChange}/>
                 <button onClick={handleLoad}>Load </button>
                 </>
             ) : (
               <>
-              <button onClick={handleNewGame}> Start New Game</button>
+                {pauseBtn ? (
+                  <>
+          <button onClick={handlePause}> Continue</button> 
+          <button onClick={handleNewGame}> Start New Game</button>
+          <button onClick={handleNewGameWithIA}> Start Game With IA</button>
+          <button onClick={handleLoadGame}>Load Game</button>
+          </>
+          ) : (
+            <>
+            <button onClick={handleNewGame}> Start New Game</button>
+              <button onClick={handleNewGameWithIA}> Start Game With IA</button>
               <button onClick={handleLoadGame}>Load Game</button>
+              </>
+            )}
+              
                 </>
             )}
           <div className='credits'>
-          <br />
           <p><b>Authors:</b></p>
           <p>Nicolás Aguado</p>
           <p>Asier Contreras</p>
@@ -244,15 +316,59 @@ const Board = () => {
    
     </>
 ) : (
-
+<>
+<div style={{ position: 'absolute', top: '20px', left: '20px'}}>
+      <FiMenu size={30}  onClick={handlePause}/>
+</div>
     <div className="board" >
       <h1 className='title' >HADSAGONO</h1>
-      {gameState.loaded ? (
-        <>
-      <h3>SCORE: {gameState.score} || GAME CODE: {gameState.code} </h3>
-      <div className={`container ${applyStyle ? 'shake' : ''}`} style={applyStyle ? { backgroundColor : '#DE7676' } : {}}>
+      
+     
+{withIA ? (
+
+  <>
+   {gameIA.loaded ? (
+    <>
+    <h3 style={{ textAlign: 'center', marginBottom: '-30px '}}>GAME CODE: {gameIA.code}</h3>   
+  <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+
+ 
+  
+    <div className='containerWithNoIA' style={{marginRight: '10px' }}>
+<h3>SCORE: {gameIA.score} </h3>
+<div className={`container ${applyStyle ? 'shake' : ''}`} style={applyStyle ? { backgroundColor : '#DE7676' } : {}}>
         
-      {gameState.boardData.map((row, rowIndex) => (
+{gameIA.boardData.map((row, rowIndex) => (
+  
+  <div key={rowIndex} className="board-row" >
+    {row.map((value, colIndex) => (
+      <div
+      key={`${rowIndex}-${colIndex}`}
+      className={`hexagon ${value === -1 ? 'empty' : ''} ${
+        colIndex % 2 === 1 ? 'odd-col' : ''
+      } ${selectedHexagons.some(hexagon => hexagon.row === rowIndex && hexagon.col === colIndex) ? 'selected' : ''}`}
+      style={{
+        backgroundColor: getHexagonColor(value),
+        '--hexagon-color': getHexagonColor(value)
+      }}
+      onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
+      onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+      onMouseUp={handleMouseUp}
+    >
+      {value !== -1 && value !== null && <span className="text">{formatValue(value)}</span>}
+    </div>
+    ))}
+  </div>
+  
+))}
+</div>
+</div>
+
+<div className='containerIA' style={{marginLeft: '10px' }}>
+<h3>IA SCORE: {gameIA.iascore} </h3>
+      <div className="container" style={{pointerEvents: 'none'}} >
+        
+      {gameIA.iaBoardData.map((row, rowIndex) => (
         
         <div key={rowIndex} className="board-row" >
           {row.map((value, colIndex) => (
@@ -260,13 +376,12 @@ const Board = () => {
             key={`${rowIndex}-${colIndex}`}
             className={`hexagon ${value === -1 ? 'empty' : ''} ${
               colIndex % 2 === 1 ? 'odd-col' : ''
-            } ${selectedHexagons.some(hexagon => hexagon.row === rowIndex && hexagon.col === colIndex) ? 'selected' : ''}`}
+            } `}
             style={{
               backgroundColor: getHexagonColor(value),
               '--hexagon-color': getHexagonColor(value)
             }}
-            onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
-            onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+          
             onMouseUp={handleMouseUp}
           >
             {value !== -1 && value !== null && <span className="text">{formatValue(value)}</span>}
@@ -276,12 +391,61 @@ const Board = () => {
         
       ))}
       </div>
-     
-      </>
-      ) : (
-        <div>Loading...</div>
-      )}
+      </div>
+      </div>
+</>
+
+) : (
+  <div>Loading...</div>
+)}
+
+
+</>
+):(
+  <>
+  {gameState.loaded ? (
+    
+  <>
+  <h3>SCORE: {gameState.score} || GAME CODE: {gameState.code} </h3>
+
+  <div className={`container ${applyStyle ? 'shake' : ''}`} style={applyStyle ? { backgroundColor : '#DE7676' } : {}}>
+        
+        {gameState.boardData.map((row, rowIndex) => (
+          
+          <div key={rowIndex} className="board-row" >
+            {row.map((value, colIndex) => (
+              <div
+              key={`${rowIndex}-${colIndex}`}
+              className={`hexagon ${value === -1 ? 'empty' : ''} ${
+                colIndex % 2 === 1 ? 'odd-col' : ''
+              } ${selectedHexagons.some(hexagon => hexagon.row === rowIndex && hexagon.col === colIndex) ? 'selected' : ''}`}
+              style={{
+                backgroundColor: getHexagonColor(value),
+                '--hexagon-color': getHexagonColor(value)
+              }}
+              onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
+              onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+              onMouseUp={handleMouseUp}
+            >
+              {value !== -1 && value !== null && <span className="text">{formatValue(value)}</span>}
+            </div>
+            ))}
+          </div>
+          
+        ))}
+        </div>
+  </>
+
+) : (
+  <div>Loading...</div>
+)}
+</>
+)}
+
+      
     </div>
+    
+    </>
   );
 };
 
