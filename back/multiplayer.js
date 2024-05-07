@@ -36,20 +36,21 @@ router.get('/new', async (req, res) => {
 
 
 router.get('/', (req, res) => {
-    main();
+    main(); //Esto es para hacer pruebas, ignorar por ahora
     res.send("200 OK");
 });
 
 async function main() {
-    let sol = utils.findFirstSolution(
-        [[16, 2, 16, 2, 16], 
+    let matrix = [
+        [16, 2, 16, 2, 16], 
         [8, 2, 2, 2, 8], 
         [8, 4, 16, 4, 8], 
         [4, 16, 4, 16, 4], 
         [4, 4, 4, 4, 4], 
-        [16, -1, 8, -1, 16]], 
-        {
-            '0,0': [ [ 0, 1 ], [ 1, 0 ] ],
+        [16, -1, 8, -1, 16]
+    ];
+    let possibleMoves = {
+        '0,0': [ [ 0, 1 ], [ 1, 0 ] ],
             '0,1': [ [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 0, -1 ], [ 1, -1 ] ],
             '0,2': [ [ 0, 1 ], [ 1, 0 ], [ 0, -1 ] ],
             '0,3': [ [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 0, -1 ], [ 1, -1 ] ],
@@ -79,10 +80,11 @@ async function main() {
             '5,2': [ [ -1, 0 ], [ -1, 1 ], [ -1, -1 ] ],
             '5,3': [],
             '5,4': [ [ -1, 0 ], [ -1, -1 ] ]
-          }, 1, 1, []
-        );
+    };
+
+    //let sol = utils.findFirstPath(matrix, possibleMoves,1,1,[]);
+    let sol = utils.findSolution(matrix,possibleMoves,10);
         console.log(sol);
-    // Print the completion returned by the LLM.
     return ("200 OK");
 }
 async function getGroqChatCompletion() {
