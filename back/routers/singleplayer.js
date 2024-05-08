@@ -15,12 +15,11 @@ router.get('/new', async (req, res) => {
         "possibleMoves": b.possibleMoves,
         "code": b.code
     };
-    console.log("Started NEW game with code: " + b.code);
     req.session.game = resjson;
+    let clone = JSON.parse(JSON.stringify(resjson));
     // En la primera jugada no se manda el codigo
-    //delete resjson.code;
-    console.log("Started NEW game with code: " + b.code)
-    res.send(resjson);
+    delete clone.code;
+    res.send(clone);
     db.cleanup(); // Hacemos cleanup de la BD con cada NEW
     return;
     
