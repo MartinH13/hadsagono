@@ -15,35 +15,62 @@ const boardSchema = new Schema({
   score: Number,
   movecount: Number,
   code: String,
-  ia: {type: Boolean, default: false},
-  iaboard: [{type: [], default: []}],
-  iascore : {type: Number, default: 0},
+  date: { type: Date, default: Date.now }
+});
+
+const boardAISchema = new Schema({
+  board: [],
+  score: Number,
+  movecount: Number,
+  code: String,
+  ai: {type: Boolean, default: false},
+  aiBoard: [{type: [], default: []}],
+  aiScore : {type: Number, default: 0},
   date: { type: Date, default: Date.now }
 });
 
 const Board = mongoose.model('Board', boardSchema);
+const BoardAI = mongoose.model('BoardAI', boardSchema);
 const BackupBoard = mongoose.model('BackupBoard', boardSchema);
 
 class DataAccess {
 
-  static async save(board, score, movecount, code, ia = false, iaboard = [], iascore = 0) {
+  static async save(board, score, movecount, code) {
     try {
       // Check if the code exists in the db
-      console.log("Checking if code exists: " + code);
       const codeExists = await DataAccess.codeExists(code);
-      console.log("Code exists: " + codeExists);
 
       if (codeExists) {
         // If the code exists, update the document
         await TempBoard.updateOne(
           { code: code },
-          { $set: { board: board, score: score, movecount: movecount, ia: ia, iaboard: iaboard, iascore: iascore } }
+          { $set: { board: board, score: score, movecount: movecount} }
         );
-        console.log("Updated board with code: " + code);
       } else {
         // If the code doesn't exist, insert a new document
-        await Board.create({ board, score, movecount, code, ia, iaboard, iascore });
-        console.log("Inserted board with code: " + code);
+        await Board.create({ board, score, movecount, code});
+      }
+      return 100;
+    } catch (error) {
+      console.error('Error:', error);
+      return 283;
+    }
+  }
+
+  static async saveAI(board, score, movecount, code, ai, aiBoard, aiScore) {
+    try {
+      // Check if the code exists in the db
+      const codeExists = await DataAccess.codeExists(code);
+
+      if (codeExists) {
+        // If the code exists, update the document
+        await TempBoard.updateOne(
+          { code: code },
+          { $set: { board: board, score: score, movecount: movecount, ai: ai, aiBoard: aiBoard, aiScore: aiScore } }
+        );
+      } else {
+        // If the code doesn't exist, insert a new document
+        await Board.create({ board, score, movecount, code, ia, aiBoard, aiScore });
       }
       return 100;
     } catch (error) {
