@@ -1,8 +1,8 @@
 let express = require('express');
 let router = express.Router();
-let Board = require('./board.js');
-let db = require('./dataAccess.js');
-let utils = require('./utils.js');
+let Board = require('../logic/board.js');
+let db = require('../logic/dataAccess.js');
+let utils = require('../logic/utils.js');
 let Groq = require("groq-sdk");
 const groq = new Groq({
     apiKey: process.env.GROQ_KEY1
