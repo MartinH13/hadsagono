@@ -84,16 +84,22 @@ class DataAccess {
     console.log("Load in dataAccess");
     if (!(await DataAccess.codeExists(code))) return 281;
 
-    // If it exists, return the board and score
-    return await Board.findOne({ code: code });
+    let board = await Board.findOne({ code: code });
+    let boardAI = await BoardAI.findOne({ code : code });
+    if (board && boardAI) {
+      console.log("Error: Both board and boardAI found. Purging...");
+      DataAccess.purgeCode(code);
+      return 282;
+    }
   }
 
   static async generateCode() {
     try {
-      console.log("New code");
       const response = await fetch('https://random-word-api.herokuapp.com/word?length=5');
       const data = await response.json();
-      console.log("Generated code:" + data);
+      if (Board.exists({ code: data[0] })) {
+        return DataAccess.generateCode();
+      }
       return data[0];
     } catch (error) {
       console.error('Error:', error);
@@ -104,7 +110,9 @@ class DataAccess {
   // Not for use outside of this class
   static async codeExists(code) {
     try {
-      return await Board.exists({ code: code });
+      const existsBoard = await Board.exists({ code: code });
+      const existsBoardAI = await BoardAI.exists({ code: code });
+      return existsBoard || existsBoardAI;
     } catch (error) {
       console.error('Error:', error);
       throw error;
@@ -115,16 +123,25 @@ class DataAccess {
   static async cleanup() {
     try {
       const oneMonthsAgo = moment().subtract(3, 'months').toDate();
-      console.log('Deleting documents older than:', oneMonthsAgo);
+      console.log('Board. Deleting documents older than:', oneMonthsAgo);
 
-      const result = await Board.deleteMany({
+      let result = await Board.deleteMany({
         $or: [
           { date: { $lt: oneMonthsAgo  } },
           { movecount: { $lt: 3 } }
         ]
       });
-
       console.log('Deleted:', result.deletedCount);
+      console.log('BoardAI. Deleting documents older than:', oneMonthsAgo);
+
+      result = await BoardAI.deleteMany({
+        $or: [
+          { date: { $lt: oneMonthsAgo  } },
+          { movecount: { $lt: 3 } }
+        ]
+      });
+      console.log('Deleted:', result.deletedCount);
+
     } catch (error) {
       console.error('Error:', error);
     }
@@ -154,10 +171,20 @@ class DataAccess {
     }
   }
 
+  static async purgeCode(code) {
+    try {
+      await Board.deleteMany({ code: code});
+      await BoardAI.deleteMany({ code: code});
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
   //Do not call this function in production
   static async deleteAll() {
     try {
       await Board.deleteMany();
+      await BoardAI.deleteMany();
       console.log('Deleted all documents');
     } catch (error) {
       console.error('Error:', error);
