@@ -91,6 +91,11 @@ class DataAccess {
       DataAccess.purgeCode(code);
       return 282;
     }
+    if (board) {
+      return board;
+    } else if (boardAI) {
+      return boardAI;
+    }
   }
 
   static async generateCode() {
