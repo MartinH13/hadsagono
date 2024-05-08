@@ -14,7 +14,7 @@ router.get('/new', async (req, res) => {
     let code = await db.generateCode();
     // for the moment, 6 rows and 5 columns
     let b = new Board({"columns": 5, "rows" : 6}, code);
-    let bia = new Board({"columns": 5, "rows" : 6}, code);
+    let bia = new Board({"board": b.board, "movecount" : b.movecount, "score": b.score}, code);
     let resjson = {
         "board": b.board,
         "iaboard": bia.board,
