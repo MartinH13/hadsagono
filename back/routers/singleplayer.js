@@ -1,7 +1,7 @@
 let express = require('express');
 let router = express.Router();
-let Board = require('./board.js');
-let db = require('./dataAccess.js');
+let Board = require('../logic/board.js');
+let db = require('../logic/dataAccess.js');
 
 router.get('/new', async (req, res) => {
     // generate new code for the game.

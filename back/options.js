@@ -33,11 +33,13 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 
-let singleRouter= require('./singleplayer');
-let multiRouter= require('./multiplayer');
+let singleRouter= require('./routers/singleplayer');
+let multiRouter= require('./routers/multiplayer');
+let loadRouter= require('./routers/load');
 
 app.use('/single', singleRouter);
 app.use('/vs', multiRouter);
+app.use('/load', loadRouter);
 
 
 
