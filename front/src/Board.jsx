@@ -140,7 +140,6 @@ const [pauseBtn, setPauseBtn] = useState(false);
     });
     const data = await response.json();
 
-    console.log(data.code);
     if (typeof data.error === 'undefined')  {
       setGameState({
       loaded: true,
