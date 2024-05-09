@@ -140,20 +140,20 @@ const [pauseBtn, setPauseBtn] = useState(false);
     });
     const data = await response.json();
 
+    console.log(data.code);
     if (typeof data.error === 'undefined')  {
       setGameState({
       loaded: true,
       boardData: data.board,
       score:  data.score,
-      code: gameState.code
-    });
-    
+      code: data.code
+      });
+
   }else{
     setTimeout(() => setApplyStyle(true), 100); 
     setTimeout(() => setApplyStyle(false), 700);
 
   }
-    //[INSERTAR DESELECCION AQUI]
   }
 
   const startGameWithIA = async () => {
