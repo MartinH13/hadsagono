@@ -83,7 +83,7 @@ async function main() {
     };
 
     //let sol = utils.findFirstPath(matrix, possibleMoves,1,1,[]);
-    let sol = utils.findSolution(matrix,possibleMoves,10);
+    let sol = utils.findSolutions(matrix,possibleMoves,10);
         console.log(sol);
     return ("200 OK");
 }

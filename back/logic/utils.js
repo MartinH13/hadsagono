@@ -69,19 +69,20 @@ class Utils {
         return frequencyArray[randomIndex];
     }
 
-    static findSolution(matrix, movements, requiredLength=3) {
+    static findSolutions(matrix, movements, requiredLength=3) {
         const rows = matrix.length;
         const cols = matrix[0].length;
         let maxPath = [];
         let maxPathLength = 0;
+        let possibleSolutions = [];
         // Iterate over each cell in the matrix
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
                 // Find the longest path starting from the current cell
                 const path = Utils.findFirstPath(matrix, movements, row, col, [], requiredLength);
-                console.log(path);
                 if (!path) continue;
-                if (path.length >= 3) return path;
+                possibleSolutions.push(path);
+
                 // Update the maximum path if the current path is longer
                 // Not required because the returned path will always be the same
                 /*
@@ -90,12 +91,11 @@ class Utils {
                     maxPathLength = path.length;
                 }
                 */
-                
-                
             }
         }
+        if (possibleSolutions.length > 0) return possibleSolutions
         if(requiredLength <= 3) return null;
-        Utils.findSolution(matrix, movements, requiredLength-1);
+        Utils.findSolutions(matrix, movements, requiredLength-1);
     }
 
     // other option: use map    
@@ -105,8 +105,6 @@ class Utils {
         const currentValue = matrix[startRow][startCol];
       
         // Add the current position to the path
-        console.log(path);
-        console.log([startRow, startCol]);
         if (Utils.includesSubarray(path, [startRow, startCol])) {
             return null;
         }
