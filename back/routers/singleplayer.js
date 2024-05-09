@@ -25,37 +25,6 @@ router.get('/new', async (req, res) => {
     
 });
 
-router.post('/load/:code', async (req, res) => {
-    let code = req.params.code;
-    console.log("Loading game with code: " + code);
-    let game = await db.load(code);
-    // if game is an integer, error code is returned
-    if (typeof game === 'number') {
-        switch (game) {
-            case 281:
-                res.send({"error": 281});
-                break;
-            case 282:
-                res.send({"error": 282});
-                break;
-        }
-        return;
-    }
-
-    // everything good, load game
-    let b = new Board({"board" : game.board, "score": game.score, "movecount": game.movecount} ,code);
-    let resjson = {
-        "board": game.board,
-        "score": game.score,
-        "movecount" : game.movecount,
-        "possibleMoves": b.possibleMoves,
-        "code": b.code
-    };
-    req.session.game = resjson;
-    res.send(resjson);
-    
-});
-
 router.post('/move', async (req, res) => {
     if (req.session.game === undefined || req.session.game === null) {
         res.send({"error": 203});
