@@ -106,7 +106,8 @@ class DataAccess {
     try {
       const response = await fetch('https://random-word-api.herokuapp.com/word?length=5');
       const data = await response.json();
-      if (Board.exists({ code: data[0] })) {
+      const returnedCode = await this.codeExists(data[0]);
+      if (returnedCode!=0) {
         console.log ("Code exists. Generating new code...");
         return DataAccess.generateCode();
       }
