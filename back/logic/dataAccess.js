@@ -40,13 +40,13 @@ class DataAccess {
       // Check if the code exists in the db
       const codeExists = await DataAccess.codeExists(code);
 
-      if (codeExists) {
+      if (codeExists == 1) {
         // If the code exists, update the document
-        await TempBoard.updateOne(
+        await Board.updateOne(
           { code: code },
           { $set: { board: board, score: score, movecount: movecount} }
         );
-      } else {
+      } else if (codeExists == 0){
         // If the code doesn't exist, insert a new document
         await Board.create({ board, score, movecount, code});
       }
@@ -62,15 +62,15 @@ class DataAccess {
       // Check if the code exists in the db
       const codeExists = await DataAccess.codeExists(code);
 
-      if (codeExists) {
+      if (codeExists == 2) {
         // If the code exists, update the document
-        await TempBoard.updateOne(
+        await Board.updateOne(
           { code: code },
           { $set: { board: board, score: score, movecount: movecount, ai: ai, aiBoard: aiBoard, aiScore: aiScore } }
         );
-      } else {
+      } else if (codeExists == 0) {
         // If the code doesn't exist, insert a new document
-        await Board.create({ board, score, movecount, code, ia, aiBoard, aiScore });
+        await BoardAI.create({ board, score, movecount, code, ia, aiBoard, aiScore });
       }
       return 100;
     } catch (error) {
@@ -82,19 +82,23 @@ class DataAccess {
   static async load(code) {
     // Check if the code exists in the db
     console.log("Load in dataAccess");
-    if (!(await DataAccess.codeExists(code))) return 281;
-
-    let board = await Board.findOne({ code: code });
-    let boardAI = await BoardAI.findOne({ code : code });
-    if (board && boardAI) {
-      console.log("Error: Both board and boardAI found. Purging...");
-      DataAccess.purgeCode(code);
-      return 282;
-    }
-    if (board) {
-      return board;
-    } else if (boardAI) {
-      return boardAI;
+    try {
+      let codeExists = await DataAccess.codeExists(code);
+      switch (codeExists) {
+        case 0:
+          return 281;
+        case 10:
+          return 284;
+        case 1:
+          return await Board.findOne({ code: code });
+        case 2:
+          return await BoardAI.findOne({ code: code });
+        default:
+          return 777;
+      } 
+    } catch (error) {
+      console.error('Error:', error);
+      return 777;
     }
   }
 
@@ -103,6 +107,7 @@ class DataAccess {
       const response = await fetch('https://random-word-api.herokuapp.com/word?length=5');
       const data = await response.json();
       if (Board.exists({ code: data[0] })) {
+        console.log ("Code exists. Generating new code...");
         return DataAccess.generateCode();
       }
       return data[0];
@@ -117,10 +122,21 @@ class DataAccess {
     try {
       const existsBoard = await Board.exists({ code: code });
       const existsBoardAI = await BoardAI.exists({ code: code });
-      return existsBoard || existsBoardAI;
+      if (existsBoard && existsBoardAI) {
+        console.log("Error: Both board and boardAI found. Purging...");
+        DataAccess.purgeCode(code);
+        return 10;
+      } else if (existsBoard) {
+        return 1;
+      }
+      else if (existsBoardAI) {
+        return 2;
+      }
+      return 0;
+      
     } catch (error) {
       console.error('Error:', error);
-      throw error;
+      return 777;
     }
   }
 
