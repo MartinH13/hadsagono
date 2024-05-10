@@ -1,0 +1,12 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: back
+      dockerfile: Dockerfile
+    ports:
+      - "3642:3642"
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - GROK_KEY1=${GROK_KEY1}
+    restart: always
