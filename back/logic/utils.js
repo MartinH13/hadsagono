@@ -69,6 +69,23 @@ class Utils {
         return frequencyArray[randomIndex];
     }
 
+    static chooseNSolutions(matrix, movements, n=5) {
+        const arr = Utils.findSolutions(matrix, movements);
+        if (n >= arr.length) {
+            return arr.slice();
+          }
+        
+          const result = [];
+          const step = arr.length / n;
+        
+          for (let i = 0; i < n; i++) {
+            const index = Math.floor(i * step);
+            result.push(arr[index]);
+          }
+        
+          return result;
+    }
+
     static findSolutions(matrix, movements, requiredLength=3) {
         const rows = matrix.length;
         const cols = matrix[0].length;
