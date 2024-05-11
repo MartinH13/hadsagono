@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react';
 import { FiMenu } from 'react-icons/fi';
 import './Board.css';
 
-const backEndUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3642';
+const backEndUrl = (import.meta.env.PROD) ? "" : 'http://localhost:3642';
 
 const Board = () => {
 

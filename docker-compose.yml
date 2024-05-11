@@ -1,37 +1,19 @@
 services:
-  backend:
+  back-front-express:
     build:
-      context: back
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-frontback
     ports:
-      - "${BACKEND_PORT}:${BACKEND_PORT}"
+      - "${PORT}:${PORT}"
     environment:
       - MONGO_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@database:27017/hadsagono
-      - GROK_KEY1=${GROK_KEY1}
-      - PORT=${BACKEND_PORT}
+      - GROQ_KEY_1=${GROQ_KEY_1}
+      - PORT=${PORT}
     depends_on:
       - database
     restart: always
     networks:
       - public
       - internal
-
-
-  front:
-    build:
-      context: front
-      dockerfile: Dockerfile
-      args:
-        VITE_BACKEND_URL: ${VITE_BACKEND_URL}
-    ports:
-      - "3000:80"
-    environment:
-      - VITE_BACKEND_URL=${VITE_BACKEND_URL}
-    depends_on:
-      - backend
-    restart: always
-    networks:
-      - public
 
   database:
     image: mongo:7

@@ -1,0 +1,24 @@
+# Stage 1: Build the React application
+FROM node:20-alpine AS build
+
+WORKDIR /app
+COPY ./front ./
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
+RUN npm install -save
+RUN npm run build
+
+# Stage 2: Serve back-end with Express (copying the built React app from Stage 1)
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY --from=build /app/dist ./public
+
+COPY ./back ./
+RUN npm install --omit=dev
+
+EXPOSE 3000
+
+# Start the Express application
+CMD ["npm", "run", "prod"]
