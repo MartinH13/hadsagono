@@ -2,6 +2,8 @@ import React, { useState,useEffect } from 'react';
 import { FiMenu } from 'react-icons/fi';
 import './Board.css';
 
+const backEndUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3642';
+
 const Board = () => {
 
   const [selectedHexagons, setSelectedHexagons] = useState([]);
@@ -84,7 +86,7 @@ const [pauseBtn, setPauseBtn] = useState(false);
   
 
   const startGame = async () => {
-    const response = await fetch('http://localhost:3642/single/new', {
+    const response = await fetch(backEndUrl + '/single/new', {
       method: 'GET',
       credentials: "include",
     });
@@ -102,7 +104,7 @@ const [pauseBtn, setPauseBtn] = useState(false);
   
   const loadGame = async (gameCode) => {
     console.log("GameCode", gameCode);
-    const response = await fetch(`http://localhost:3642/single/load/${gameCode}`, {
+    const response = await fetch(backEndUrl + `/single/load/${gameCode}`, {
       method: 'POST',
       credentials: "include",
       headers: {
@@ -130,7 +132,7 @@ const [pauseBtn, setPauseBtn] = useState(false);
   };
  
   const postMoves = async (moves) => {
-    const response = await fetch('http://localhost:3642/single/move', {
+    const response = await fetch(backEndUrl + '/single/move', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -156,7 +158,7 @@ const [pauseBtn, setPauseBtn] = useState(false);
   }
 
   const startGameWithIA = async () => {
-    const response = await fetch('http://localhost:3642/vs/new', {
+    const response = await fetch(backEndUrl + '/vs/new', {
       method: 'GET',
       credentials: "include",
     });

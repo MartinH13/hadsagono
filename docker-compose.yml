@@ -1,21 +1,58 @@
-version: '3'
 services:
   backend:
     build:
       context: back
       dockerfile: Dockerfile
     ports:
-      - "3642:3642"
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     environment:
-      - MONGO_URI=${MONGO_URI}
+      - MONGO_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@database:27017/hadsagono
       - GROK_KEY1=${GROK_KEY1}
+      - PORT=${BACKEND_PORT}
+    depends_on:
+      - database
     restart: always
+    networks:
+      - public
+      - internal
+
+
   front:
     build:
       context: front
       dockerfile: Dockerfile
+      args:
+        VITE_BACKEND_URL: ${VITE_BACKEND_URL}
     ports:
-      - "80:80"
+      - "3000:80"
     environment:
-      - BACKEND_URL=${BACKEND_URL}
+      - VITE_BACKEND_URL=${VITE_BACKEND_URL}
+    depends_on:
+      - backend
     restart: always
+    networks:
+      - public
+
+  database:
+    image: mongo:7
+    restart: always
+    volumes:
+      - ./mongodata:/data/db
+      - ./db/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: hadsagono
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    command: mongod --auth --port 27017
+    networks:
+      - internal
+
+networks:
+  public:
+    driver: bridge
+    internal: false
+  internal:
+    driver: bridge
+    internal: true

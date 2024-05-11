@@ -3,6 +3,8 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 COPY . ./
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
 RUN npm install -save
 RUN npm run build
 
