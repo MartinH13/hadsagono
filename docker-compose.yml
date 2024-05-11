@@ -10,14 +10,13 @@ services:
       - PORT=${PORT}
     depends_on:
       - database
-    restart: always
+    restart: unless-stopped
     networks:
       - public
       - internal
 
   database:
     image: mongo:7
-    restart: always
     volumes:
       - ./mongodata:/data/db
       - ./db/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
@@ -28,6 +27,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     command: mongod --auth --port 27017
+    restart: unless-stopped
     networks:
       - internal
 
