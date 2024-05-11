@@ -3,6 +3,13 @@ let router = express.Router();
 let Board = require('../logic/board.js');
 let db = require('../logic/dataAccess.js');
 let utils = require('../logic/utils.js');
+let ChatGroq = require("@langchain/groq").ChatGroq;
+let ChatPromptTemplate = require("@langchain/core/prompts").ChatPromptTemplate;
+require('dotenv').config();
+const model = new ChatGroq({
+    apiKey: process.env.GROQ_KEY_1,
+  });
+
 
 router.get('/new', async (req, res) => {
 
@@ -30,6 +37,57 @@ router.get('/new', async (req, res) => {
 
 });
 
+router.post('/move', async (req, res) => {
+    if (req.session.game === undefined || req.session.game === null) {
+        res.send({"error": 203});
+        return;
+    }
+    let moves = {"nodes" : req.body.moves};
+    let game = req.session.game;
+
+    //Tenemos que dividir el JSON en dos para que board.js pueda trabajar con él
+    // Parse the original JSON string into a JavaScript object
+    const parsedData = JSON.parse(game);
+
+    // Create new objects for JSON1 and JSON2
+    const json1 = {
+    board: parsedData.board,
+    score: parsedData.score,
+    code: parsedData.code,
+    possibleMoves: parsedData.possibleMoves
+    };
+
+    const json2 = {
+    board: parsedData.boardAI,
+    score: parsedData.scoreAI,
+    code: parsedData.code,
+    possibleMoves: parsedData.possibleMoves
+    };
+
+    let b = new Board(json1, game.code);
+    let bAI = new Board(json2, game.code);
+    let resu = b.executeMove(moves);
+    if (resu != 100) {
+        res.send({"error": resu});
+        return;
+    }
+    let resjson = {
+        "board": b.board,
+        "boardAI": bAI.board,
+        "score": b.score,
+        "scoreAI": bAI.score
+    };
+
+    req.session.game = b;
+    // Guardar cada 3 turnos
+    if (b.movecount >= 3) {
+        resjson["code"] = b.code;
+    }
+    if (b.movecount % 3 == 0) {
+        await db.save(b.board, b.score, b.movecount, b.code);
+    }
+    res.send(resjson);
+});
 
 router.get('/', (req, res) => {
     main(); //Esto es para hacer pruebas, ignorar por ahora
@@ -81,18 +139,17 @@ async function main() {
     //let sol = utils.findFirstPath(matrix, possibleMoves,1,1,[]);
     let sol = utils.findSolutions(matrix,possibleMoves,10);
         console.log(sol);
+
+        const prompt = ChatPromptTemplate.fromMessages([
+            ["system", "You are a helpful assistant"],
+            ["human", "{input}"],
+          ]);
+          const chain = prompt.pipe(model);
+          const response = await chain.invoke({
+            input: "Hello",
+          });
+          console.log("response", response);
     return ("200 OK");
-}
-async function getGroqChatCompletion() {
-    return groq.chat.completions.create({
-        messages: [
-            {
-                role: "user",
-                content: `You are playing a connecting numbers game. The numbers are represented in a matrix. You have to connect a minimum of 3 numbers of the same value. You are restricted to only some possible movements along the matrix. I will pass on an array of possible movements like this: { "i,j" : [[a,b], [c,d]]} where i is the row of the matrix and j is the column of the matrix. From i,j you can move in the directions displayed by [a,b] or where a is the difference in the "rows" (i variable) and b is the difference in the columns (j variable) You must connect the most amount of numbers. Please return your proposed movement like this: {"moves":[[z,m],[x1,y1],[x2,y2],...]} where [z,m] is the starting coordinate (i,j) in the matrix and the following are the movements on the matrix (movements MUST be valid according to the array of possible movements) Also movements must be from each node, limiting its format to 1, -1 or 0. This is the matrix: [ [16, 2, 16, 2, 16], [8, 2, 2, 2, 8], [8, 4, 16, 4, 8], [4, 16, 4, 16, 4], [4, 4, 4, 4, 4], [16, -1, 8, -1, 16], ] The array of possible movements is this: { '0,0': [ [ 0, 1 ], [ 1, 0 ] ], '0,1': [ [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 0, -1 ], [ 1, -1 ] ], '0,2': [ [ 0, 1 ], [ 1, 0 ], [ 0, -1 ] ], '0,3': [ [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 0, -1 ], [ 1, -1 ] ], '0,4': [ [ 1, 0 ], [ 0, -1 ] ], '1,0': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ] ], '1,1': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ], '1,2': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ], '1,3': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ], '1,4': [ [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ], '2,0': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ] ], '2,1': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ], '2,2': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ], '2,3': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ], '2,4': [ [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ], '3,0': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ] ], '3,1': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ], '3,2': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ], '3,3': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ], '3,4': [ [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ], '4,0': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ] ], '4,1': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ], '4,2': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ], '4,3': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ], '4,4': [ [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ], '5,0': [ [ -1, 0 ], [ -1, 1 ] ], '5,1': [], '5,2': [ [ -1, 0 ], [ -1, 1 ], [ -1, -1 ] ], '5,3': [], '5,4': [ [ -1, 0 ], [ -1, -1 ] ] } Please limit your answer to ONLY the specified format. Do not be verbose.`
-            }
-        ],
-        model: "llama3-70b-8192"
-    });
 }
 
 

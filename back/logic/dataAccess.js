@@ -81,7 +81,6 @@ class DataAccess {
 
   static async load(code) {
     // Check if the code exists in the db
-    console.log("Load in dataAccess");
     try {
       let codeExists = await DataAccess.codeExists(code);
       switch (codeExists) {
@@ -145,7 +144,6 @@ class DataAccess {
   static async cleanup() {
     try {
       const oneMonthsAgo = moment().subtract(3, 'months').toDate();
-      console.log('Board. Deleting documents older than:', oneMonthsAgo);
 
       let result = await Board.deleteMany({
         $or: [
@@ -153,17 +151,12 @@ class DataAccess {
           { movecount: { $lt: 3 } }
         ]
       });
-      console.log('Deleted:', result.deletedCount);
-      console.log('BoardAI. Deleting documents older than:', oneMonthsAgo);
-
       result = await BoardAI.deleteMany({
         $or: [
           { date: { $lt: oneMonthsAgo  } },
           { movecount: { $lt: 3 } }
         ]
       });
-      console.log('Deleted:', result.deletedCount);
-
     } catch (error) {
       console.error('Error:', error);
     }

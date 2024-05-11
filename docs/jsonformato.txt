@@ -50,3 +50,29 @@ Y tiene que ser par y más de 4.
 X tiene que ser impar y más de 3.
 Z tiene que ser JSON de tipo board, con sus columnas y filas cumpliendo las conidicones de X e Y
 -------------------------------------------
+{
+  "board": [
+    [16, 2, 16, 2, 16],
+    [8, 2, 2, 2, 8],
+    [8, 4, 16, 4, 8],
+    [4, 16, 4, 16, 4],
+    [4, 4, 4, 4, 4],
+    [16, -1, 8, -1, 16]
+  ],
+  "boardAI": [
+    [16, 2, 16, 2, 16],
+    [8, 2, 2, 2, 8],
+    [8, 4, 16, 4, 8],
+    [4, 16, 4, 16, 4],
+    [4, 4, 4, 4, 4],
+    [16, -1, 8, -1, 16]
+  ],
+  "score": 100,
+  "scoreAI": 150,
+  "code": AAAAA,
+  "possibleMoves": [
+    "0,0" : [ [1,0], [-1, 0], [0,1] ],
+    "0,1" : [ [0,1], [1,1] ],
+    ...
+  ]
+}
