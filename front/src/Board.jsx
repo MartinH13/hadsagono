@@ -7,6 +7,7 @@ const backEndUrl = (import.meta.env.PROD) ? "" : 'http://localhost:3642';
 const Board = () => {
 
   const [selectedHexagons, setSelectedHexagons] = useState([]);
+  const [gameCode, setGameCode] = useState(undefined);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [applyStyle, setApplyStyle] = useState(false);
   const [showInput, setShowInput] = useState(false); 
@@ -143,13 +144,15 @@ const [pauseBtn, setPauseBtn] = useState(false);
     const data = await response.json();
 
     if (typeof data.error === 'undefined')  {
-      setGameState({
-      loaded: true,
-      boardData: data.board,
-      score:  data.score,
-      code: data.code
-      });
+      // if data contains a code
+      if (data.code !== null || typeof data.code !== 'undefined')
+        setGameCode(data.code);
 
+      setGameState({
+        loaded: true,
+        boardData: data.board,
+        score:  data.score,
+        });
   }else{
     setTimeout(() => setApplyStyle(true), 100); 
     setTimeout(() => setApplyStyle(false), 700);
@@ -385,7 +388,7 @@ const [pauseBtn, setPauseBtn] = useState(false);
   <>
    {gameIA.loaded ? (
     <>
-    <h3 style={{ textAlign: 'center', marginBottom: '-30px '}}>GAME CODE: {gameIA.code}</h3>   
+    <h3 style={{ textAlign: 'center', marginBottom: '-30px '}}>{typeof gameCode !== 'undefined' && <span> || GAME CODE: {gameCode}</span>}</h3>   
   <div style={{ display: 'flex', justifyContent: 'space-around' }}>
 
  
@@ -462,7 +465,7 @@ const [pauseBtn, setPauseBtn] = useState(false);
   {gameState.loaded ? (
     
   <>
-  <h3>SCORE: {gameState.score} || GAME CODE: {gameState.code} </h3>
+  <h3>SCORE: {gameState.score} {typeof gameCode !== 'undefined' && <span> || GAME CODE: {gameCode}</span>} </h3>
 
   <div className={`container ${applyStyle ? 'shake' : ''}`} style={applyStyle ? { backgroundColor : '#DE7676' } : {}}>
         
