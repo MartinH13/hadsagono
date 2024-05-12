@@ -71,7 +71,22 @@ router.post('/move', async (req, res) => {
 
     // AI move
     // de momento, cogemos el primer camino de 3 que haya -- MARTIN CAMBIA ESTO
-    let aiMove = utils.transformPathToMoves(utils.findSolutions(bAI.board, bAI.possibleMoves, 3)[0]);
+    let aiMove1 = utils.findSolutions(bAI.board, bAI.possibleMoves, 15);
+    if (!aiMove1) {
+        //Aqui hay que meter comunicacion con frontend para acabar la partida
+        console.log("No hay movimientos IA");
+        return;
+    }
+    let aiMove = utils.transformPathToMoves(aiMove1[0]);
+    console.log(aiMove);
+    
+    let playerMove1 = utils.findSolutions(b.board, b.possibleMoves, 15);
+    if (!playerMove1) {
+        //Aqui hay que meter comunicacion con frontend para acabar la partida
+        console.log("No hay movimientos Player");
+        return;
+    }
+    
     let aiJsonMove = {"nodes": aiMove};
     let aiResu = bAI.executeMove(aiJsonMove);
 
