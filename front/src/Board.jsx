@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FiMenu } from 'react-icons/fi';
+import Snackbar from 'node-snackbar';
 import './Board.css';
+import 'node-snackbar/dist/snackbar.min.css';
 
 const backEndUrl = (import.meta.env.PROD) ? "" : 'http://localhost:3642';
 
@@ -140,6 +142,7 @@ const Board = () => {
         });
       }
       inputError = false;
+      Snackbar.show({ text: `Loaded game with code "${data.code}" !`, duration: 3750, pos: 'bottom-center', showAction: false});
     } else {
       inputError = true;
     }
@@ -160,6 +163,11 @@ const Board = () => {
     if (typeof data.error === 'undefined') {
       // if data contains a code
       if (data.code !== undefined) {
+        if (gameCode === undefined) {
+          Snackbar.show({ text: `Game saved with code "${data.code}"!`, duration: 3750, pos: 'bottom-center', showAction: false});
+        } else {
+          Snackbar.show({ text: 'Game saved!', pos: 'bottom-center', duration: 1000, showAction: false});
+        }
         setGameCode(data.code);
       }
 
@@ -188,6 +196,11 @@ const Board = () => {
     if (typeof data.error === 'undefined') {
       // if data contains a code
       if (data.code !== undefined) {
+        if (gameCode === undefined) {
+          Snackbar.show({ text: `Game saved with code "${data.code}"!`, duration: 3750, pos: 'bottom-center', showAction: false});
+        } else {
+          Snackbar.show({ text: 'Game saved!', pos: 'bottom-center', duration: 1000, showAction: false});
+        }
         setGameCode(data.code);
       }
       setGameIA({
