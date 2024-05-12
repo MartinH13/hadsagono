@@ -35,7 +35,7 @@ router.post('/:code', async (req, res) => {
             "board": b.board,
             "iaboard": bia.board,
             "score": b.score,
-            "iascore": bia.aiScore,
+            "iascore": bia.score,
             "movecount" : game.movecount,
             "possibleMoves": b.possibleMoves,
             "code": code
