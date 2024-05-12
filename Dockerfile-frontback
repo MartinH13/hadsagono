@@ -18,7 +18,5 @@ COPY --from=build /app/dist ./public
 COPY ./back ./
 RUN npm install --omit=dev
 
-EXPOSE 3000
-
 # Start the Express application
 CMD ["npm", "run", "prod"]
