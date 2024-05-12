@@ -77,7 +77,7 @@ const Board = () => {
         console.log("no hay error");
         setInputNull(false);
         setShowPopup(false);
-        
+
       } else {
         setInputNull(true);
         setShowPopup(true);
@@ -88,12 +88,16 @@ const Board = () => {
 
 
   const startGame = async () => {
+    setGameState({
+      loaded: false
+    });
     const response = await fetch(backEndUrl + '/single/new', {
       method: 'GET',
       credentials: "include",
     });
     const data = await response.json();
     console.log("CODIGO", data.code);
+    setGameCode(undefined);
     setGameState({
       loaded: true,
       boardData: data.board,
@@ -103,7 +107,7 @@ const Board = () => {
   };
 
   const loadGame = async (gameCode) => {
-  
+
     console.log("GameCode", gameCode);
     const response = await fetch(backEndUrl + `/load/${gameCode}`, {
       method: 'POST',
@@ -116,25 +120,25 @@ const Board = () => {
     const data = await response.json();
     console.log("DATA", data);
     if (data.error !== 281 && data.error !== 282) {
-      if(data.iaboard === undefined){
+      if (data.iaboard === undefined) {
         setWithIA(false);
         setGameCode(data.code);
         setGameState({
-        loaded: true,
-        boardData: data.board,
-        score: data.score
-      });
-    }else{
-      setWithIA(true);
-      setGameCode(data.code);
-      setGameIA({
-        loaded: true,
-        boardData: data.board, 
-        score: data.score,
-        iaBoardData: data.iaboard,
-        iascore: data.iascore
+          loaded: true,
+          boardData: data.board,
+          score: data.score
         });
-    }
+      } else {
+        setWithIA(true);
+        setGameCode(data.code);
+        setGameIA({
+          loaded: true,
+          boardData: data.board,
+          score: data.score,
+          iaBoardData: data.iaboard,
+          iascore: data.iascore
+        });
+      }
       inputError = false;
     } else {
       inputError = true;
@@ -153,19 +157,20 @@ const Board = () => {
     });
     const data = await response.json();
 
-    if (typeof data.error === 'undefined')  {
+    if (typeof data.error === 'undefined') {
       // if data contains a code
-      if (data.code !== null || typeof data.code !== 'undefined')
+      if (data.code !== undefined) {
         setGameCode(data.code);
+      }
 
       setGameState({
         loaded: true,
         boardData: data.board,
-        score:  data.score,
-        });
-  }else{
-    setTimeout(() => setApplyStyle(true), 100); 
-    setTimeout(() => setApplyStyle(false), 700);
+        score: data.score,
+      });
+    } else {
+      setTimeout(() => setApplyStyle(true), 100);
+      setTimeout(() => setApplyStyle(false), 700);
 
     }
   }
@@ -180,10 +185,11 @@ const Board = () => {
     });
     const data = await response.json();
 
-    if (typeof data.error === 'undefined')  {
+    if (typeof data.error === 'undefined') {
       // if data contains a code
-      if (data.code !== null || typeof data.code !== 'undefined')
-        setGameCode(data.code);      
+      if (data.code !== undefined) {
+        setGameCode(data.code);
+      }
       setGameIA({
         loaded: true,
         boardData: data.board,
@@ -191,22 +197,26 @@ const Board = () => {
         iaBoardData: data.iaboard,
         iascore: data.iascore
 
-        });
-        
-  }else{
-    setTimeout(() => setApplyStyle(true), 100); 
-    setTimeout(() => setApplyStyle(false), 700);
+      });
+
+    } else {
+      setTimeout(() => setApplyStyle(true), 100);
+      setTimeout(() => setApplyStyle(false), 700);
 
     }
-    
+
   }
 
   const startGameWithIA = async () => {
+    setGameIA({
+      loaded: false
+    });
     const response = await fetch(backEndUrl + '/vs/new', {
       method: 'GET',
       credentials: "include",
     });
     const data = await response.json();
+    setGameCode(undefined);
     setGameIA({
       loaded: true,
       boardData: data.board,
@@ -363,7 +373,7 @@ const Board = () => {
         console.log("With IA");
         postMovesIA(resultArray);
       } else {
-      postMoves(resultArray);
+        postMoves(resultArray);
       }
     }
     setIsMouseDown(false);
@@ -428,11 +438,11 @@ const Board = () => {
 
         {withIA ? (
 
-  <>
-   {gameIA.loaded ? (
-    <>
-    <h3 style={{ textAlign: 'center', marginBottom: '-30px '}}>{typeof gameCode !== 'undefined' && <span> GAME CODE: {gameCode}</span>}</h3>   
-  <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <>
+            {gameIA.loaded ? (
+              <>
+                <h3 style={{ textAlign: 'center', marginBottom: '-30px ' }}>{typeof gameCode !== 'undefined' && <span> GAME CODE: {gameCode}</span>}</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-around' }}>
 
 
 
@@ -465,9 +475,9 @@ const Board = () => {
                     </div>
                   </div>
 
-                  <div className='containerIA' style={{ marginLeft: '10px'}}>
+                  <div className='containerIA' style={{ marginLeft: '10px' }}>
                     <h3>IA SCORE: {gameIA.iascore} </h3>
-                    <div className="container" style={{ pointerEvents: 'none', scale: '0.8', marginTop:'-50px' }} >
+                    <div className="container" style={{ pointerEvents: 'none', scale: '0.8', marginTop: '-50px' }} >
 
                       {gameIA.iaBoardData.map((row, rowIndex) => (
 
@@ -493,7 +503,7 @@ const Board = () => {
                     </div>
                     <div style={{ marginTop: '-50px' }}>
                       <p><b>HOLA MENSAJE DE PRUEBA</b></p>
-                      </div>
+                    </div>
                   </div>
                 </div>
               </>
@@ -503,13 +513,13 @@ const Board = () => {
             )}
 
 
-</>
-):(
-  <>
-  {gameState.loaded ? (
-    
-  <>
-  <h3>SCORE: {gameState.score} {typeof gameCode !== 'undefined' && <span> || GAME CODE: {gameCode}</span>} </h3>
+          </>
+        ) : (
+          <>
+            {gameState.loaded ? (
+
+              <>
+                <h3>SCORE: {gameState.score} {typeof gameCode !== 'undefined' && <span> || GAME CODE: {gameCode}</span>} </h3>
 
                 <div className={`container ${applyStyle ? 'shake' : ''}`} style={applyStyle ? { backgroundColor: '#DE7676' } : {}}>
 
