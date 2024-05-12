@@ -51,17 +51,17 @@ router.post('/move', async (req, res) => {
 
     // Create new objects for JSON1 and JSON2
     const json1 = {
-    board: parsedData.board,
-    score: parsedData.score,
-    code: parsedData.code,
-    possibleMoves: parsedData.possibleMoves
+        board: parsedData.board,
+        score: parsedData.score,
+        code: parsedData.code,
+        possibleMoves: parsedData.possibleMoves
     };
 
     const json2 = {
-    board: parsedData.boardAI,
-    score: parsedData.scoreAI,
-    code: parsedData.code,
-    possibleMoves: parsedData.possibleMoves
+        board: parsedData.iaboard,
+        score: parsedData.iascore,
+        code: parsedData.code,
+        possibleMoves: parsedData.possibleMoves
     };
 
     let b = new Board(json1, game.code);
@@ -71,14 +71,33 @@ router.post('/move', async (req, res) => {
         res.send({"error": resu});
         return;
     }
+
+    // AI move
+    // de momento, cogemos el primer camino de 3 que haya
+    let aiMove = Utils.findSolutions(bAI.board, bAI.possibleMoves, 3)[0];
+    let aiJsonMove = {"nodes": aiMove};
+    let aiResu = bAI.executeMove(aiJsonMove);
+
     let resjson = {
         "board": b.board,
-        "boardAI": bAI.board,
+        "iaboard": bAI.board,
         "score": b.score,
-        "scoreAI": bAI.score
+        "iascore": bAI.score,
+        "iaResult" : aiResu
     };
 
-    req.session.game = b;
+    // session save
+    let sess = {
+        "board": b.board,
+        "iaboard": bia.board,
+        "score": b.score,
+        "iascore": bia.score,
+        "movecount" : b.movecount,
+        "possibleMoves": b.possibleMoves,
+        "code": b.code
+    };
+
+    req.session.game = sess;
     // Guardar cada 3 turnos
     if (b.movecount >= 3) {
         resjson["code"] = b.code;
