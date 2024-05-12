@@ -31,7 +31,7 @@ docker-compose up -d
 sudo systemctl enable docker
 ```
 
-9. It is recommended that you run your web application behind a reverse proxy (like [nginx](https://nginx.org)) so you can protect the application through TLS/SSL and have more control over the web server. An example _nginx_ domain config (to be placed in _/etc/nginx/conf.d/domains/_) for an application running over the port _3456_ at an IP _[MACHINE_IP]_ and with a hostname _[DOMAIN]_
+9. It is recommended that you run your web application behind a reverse proxy (like [nginx](https://nginx.org)) so you can protect the application through TLS/SSL and have more control over the web server. An example _nginx_ domain config (to be placed in _/etc/nginx/conf.d/domains/_) for an application running over the port _3456_ at an IP _[MACHINE_IP]_ and with a hostname _[DOMAIN]_ could be
 ```
 server {
         listen      [MACHINE_IP]:443 ssl;
@@ -68,4 +68,40 @@ server {
 
 ## Developer Environment Setup
 
-// TODO
+If you want to contribute to the project, you can setup your environment following these steps. The development is done separately from the _frontend_ and the _backend_. If you haven't done so, clone the project and install [node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) in your local development machine. Usually in order to test the whole project you'll need to have two terminals active, one with the frontend development server and the other one with the express backend application.
+
+### Front-End
+
+All the development related to this section happens in the _front_ folder. The used framework is [Vite-React](https://vitejs.dev/) (JavaScript).
+
+- You'll want to open a terminal and execute the following command to install all the needed dependencies
+```
+npm install -save
+```
+- The source files of the React frontend are found in the _front/src_ folder.
+
+- To run the development server, you'll need to enter in the terminal
+```
+npm run dev
+```
+
+### Back-End
+
+For the backend, the application relies on a mongodb database, the express framework and an API key for the GROQ LLM provider.
+
+- First, you'll want to open a terminal and execute the following command to install all node dependencies
+```
+npm install -save
+```
+- Then, rename the ".env.example" file to ".env".
+- You'll want to get yourself an API Key from the LLM Provider [Groq](https://console.groq.com) and you should insert it in the .env file.
+- The application also needs a mongodb database to save the games on. The db MUST have a created database named "hadsagono". The application will create itself three collections: "boards", "boardais" and "backupboards" so make sure there aren't any naming collisions. You must provide a mongo connection URI in the .env file. If you haven't got a mongodb instance, you can [self-host](https://www.mongodb.com/try/download/community) one in your local machine.
+
+### Recommended IDE
+
+You can use whatever IDE you want to develop the project, as the application itself does not need any fancy IDEs. Nevertheless, the development team recomends using [vscode](https://code.visualstudio.com/).
+We have published our recommended extensions for vscode for working in the proyect in an [extension pack](https://marketplace.visualstudio.com/items?itemName=nicoagr.hadsagono-vscodeextensions) for your convenience.
+
+## Legal
+
+*This project does NOT have an open-source license. For more information about open source licenses, click [here](https://opensource.org/faq). If you want more information about what does mean to NOT have an open-source license, click [here](https://choosealicense.com/no-permission/)*

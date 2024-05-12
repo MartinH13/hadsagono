@@ -1,0 +1,31 @@
+{
+  "name": "hadsagono-vscodeextensions",
+  "displayName": "HADSagono-vsCodeExtensions",
+  "description": "Useful VSCode extensions for developing the HADSagono application.",
+  "version": "1.0.0",
+  "icon" : "hexa.png",
+  "publisher" : "nicoagr",
+  "engines": {
+    "vscode": "^1.89.0"
+  },
+  "repository": {
+    "type": "git", 
+    "url": "https://github.com/martinh13/hadsagono"
+  },
+  "categories": [
+    "Extension Packs"
+  ],
+  "extensionPack": [ 
+    "dbaeumer.vscode-eslint", 
+    "formulahendry.docker-explorer", 
+    "formulahendry.docker-extension-pack", 
+    "github.copilot", 
+    "github.copilot-chat", 
+    "mgmcdermott.vscode-language-babel", 
+    "ms-azuretools.vscode-docker", 
+    "ms-ceintl.vscode-language-pack-es", 
+    "ms-vscode.js-debug-nightly",
+    "p1c2u.docker-compose",
+    "xabikos.javascriptsnippets"
+  ]
+}
