@@ -69,6 +69,21 @@ class Utils {
         return frequencyArray[randomIndex];
     }
 
+    // Given a path of moves, transform it into a series of moves that can be executed
+    static transformPathToMoves(path) {
+        let moves = [];
+        // we assume path >= 3
+        moves.push([path[0][0], path[0][1]])
+        let current = path[0];
+        for (let i = 1; i < path.length; i++) {
+            let rowDiff = path[i][0] - current[0];
+            let colDiff = path[i][1] - current[1];
+            moves.push([rowDiff, colDiff]);
+            current = path[i];
+        }
+        return moves;
+    }
+
     static chooseNSolutions(matrix, movements, n=5) {
         const arr = Utils.findSolutions(matrix, movements);
         if (n >= arr.length) {

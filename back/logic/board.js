@@ -213,7 +213,7 @@ class Board {
         }
         
         // Check if at least 3 hexagons are selected
-        if (moves.length < 3) {
+        if (moves.nodes.length < 3) {
             return 255;
         }
 

@@ -70,8 +70,8 @@ router.post('/move', async (req, res) => {
     }
 
     // AI move
-    // de momento, cogemos el primer camino de 3 que haya
-    let aiMove = utils.findSolutions(bAI.board, bAI.possibleMoves, 3)[0];
+    // de momento, cogemos el primer camino de 3 que haya -- MARTIN CAMBIA ESTO
+    let aiMove = utils.transformPathToMoves(utils.findSolutions(bAI.board, bAI.possibleMoves, 3)[0]);
     let aiJsonMove = {"nodes": aiMove};
     let aiResu = bAI.executeMove(aiJsonMove);
 
