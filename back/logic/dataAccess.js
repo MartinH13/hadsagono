@@ -30,7 +30,7 @@ const boardAISchema = new Schema({
 });
 
 const Board = mongoose.model('Board', boardSchema);
-const BoardAI = mongoose.model('BoardAI', boardSchema);
+const BoardAI = mongoose.model('BoardAI', boardAISchema);
 const BackupBoard = mongoose.model('BackupBoard', boardSchema);
 
 class DataAccess {
@@ -70,7 +70,7 @@ class DataAccess {
         );
       } else if (codeExists == 0) {
         // If the code doesn't exist, insert a new document
-        await BoardAI.create({ board, score, movecount, code, ia, aiBoard, aiScore });
+        await BoardAI.create({ board, score, movecount, code, ai, aiBoard, aiScore });
       }
       return 100;
     } catch (error) {
