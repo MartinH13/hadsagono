@@ -68,15 +68,16 @@ const Board = () => {
   };
 
   const handleLoad = async () => {
-    setWithIA(false);
     if (inputValue.length === 0) {
       setInputNull(true);
       setShowPopup(true);
     } else {
       await loadGame(inputValue);
       if (inputError == false) {
+        console.log("no hay error");
         setInputNull(false);
         setShowPopup(false);
+        
       } else {
         setInputNull(true);
         setShowPopup(true);
@@ -102,6 +103,7 @@ const Board = () => {
   };
 
   const loadGame = async (gameCode) => {
+  
     console.log("GameCode", gameCode);
     const response = await fetch(backEndUrl + `/load/${gameCode}`, {
       method: 'POST',
@@ -112,25 +114,26 @@ const Board = () => {
       body: JSON.stringify({ code: gameCode })
     });
     const data = await response.json();
-console.log("DATA", data);
+    console.log("DATA", data);
     if (data.error !== 281 && data.error !== 282) {
-      if(data.iascore !== null){
-        console.log("TODO OK")
-      setGameCode(data.code);
-      setGameState({
+      if(data.iaboard === undefined){
+        setWithIA(false);
+        setGameCode(data.code);
+        setGameState({
         loaded: true,
         boardData: data.board,
         score: data.score
       });
     }else{
+      setWithIA(true);
+      setGameCode(data.code);
       setGameIA({
         loaded: true,
         boardData: data.board, 
         score: data.score,
         iaBoardData: data.iaboard,
-        iascore: data.iascore,
-        code: data.code
-      });
+        iascore: data.iascore
+        });
     }
       inputError = false;
     } else {
@@ -496,7 +499,7 @@ console.log("DATA", data);
               </>
 
             ) : (
-              <div>Loading...</div>
+              <div>Loading game with IA...</div>
             )}
 
 
@@ -536,7 +539,7 @@ console.log("DATA", data);
               </>
 
             ) : (
-              <div>Loading...</div>
+              <div>Loading singleplayer...</div>
             )}
           </>
         )}
