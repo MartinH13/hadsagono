@@ -1,6 +1,6 @@
 # HADSagono
 
-A kids' game based in connecting hexagons. Built using React, Vite, Express, Mongodb, Langchain and Node.js.
+A kids' game about connecting hexagons. Built using React, Vite, Express, Mongodb, Langchain and Node.js.
 
 ## Demo
 
