@@ -44,24 +44,21 @@ router.post('/move', async (req, res) => {
     }
     let moves = {"nodes" : req.body.moves};
     let game = req.session.game;
-
-    //Tenemos que dividir el JSON en dos para que board.js pueda trabajar con él
-    // Parse the original JSON string into a JavaScript object
-    const parsedData = JSON.parse(game);
-
+    const parsedData = game;
     // Create new objects for JSON1 and JSON2
     const json1 = {
         board: parsedData.board,
         score: parsedData.score,
         code: parsedData.code,
-        possibleMoves: parsedData.possibleMoves
-    };
+        movecount: parsedData.movecount,
+   };
 
     const json2 = {
         board: parsedData.iaboard,
         score: parsedData.iascore,
         code: parsedData.code,
-        possibleMoves: parsedData.possibleMoves
+        movecount: parsedData.movecount
+
     };
 
     let b = new Board(json1, game.code);
@@ -74,7 +71,7 @@ router.post('/move', async (req, res) => {
 
     // AI move
     // de momento, cogemos el primer camino de 3 que haya
-    let aiMove = Utils.findSolutions(bAI.board, bAI.possibleMoves, 3)[0];
+    let aiMove = utils.findSolutions(bAI.board, bAI.possibleMoves, 3)[0];
     let aiJsonMove = {"nodes": aiMove};
     let aiResu = bAI.executeMove(aiJsonMove);
 
@@ -89,9 +86,9 @@ router.post('/move', async (req, res) => {
     // session save
     let sess = {
         "board": b.board,
-        "iaboard": bia.board,
+        "iaboard": bAI.board,
         "score": b.score,
-        "iascore": bia.score,
+        "iascore": bAI.score,
         "movecount" : b.movecount,
         "possibleMoves": b.possibleMoves,
         "code": b.code
@@ -104,6 +101,7 @@ router.post('/move', async (req, res) => {
         resjson["code"] = b.code;
     }
     res.send(resjson);
+    
 });
 
 router.get('/', (req, res) => {
