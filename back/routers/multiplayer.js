@@ -10,7 +10,11 @@ require('dotenv').config();
 const model = new ChatGroq({
     apiKey: process.env.GROQ_KEY_1,
   });
-
+const prompt = ChatPromptTemplate.fromMessages([
+    ["system", aitools.generateBasePrompt()],
+    ["human", "{input}"],
+]);
+const chain = prompt.pipe(model);
 
 router.get('/new', async (req, res) => {
 
@@ -70,15 +74,8 @@ router.post('/move', async (req, res) => {
         res.send({"error": resu});
         return;
     }
-
-    // AI move
-    const prompt = ChatPromptTemplate.fromMessages([
-        ["system", aitools.generateBasePrompt(bAI.board, parsedData.possibleMoves)],
-        ["human", "{input}"],
-    ]);
-    const chain = prompt.pipe(model);
     let possibleSols = utils.chooseNSolutions(bAI.board, parsedData.possibleMoves, 10)
-    let movesPrompt = aitools.generateMovementsPrompt(possibleSols);
+    let movesPrompt = aitools.generateMovementsPrompt(bAI.board, parsedData.possibleMoves, possibleSols);
     const response = await chain.invoke({
         input: movesPrompt,
     });
@@ -130,66 +127,9 @@ router.post('/move', async (req, res) => {
 });
 
 router.get('/', (req, res) => {
-    main(); //Esto es para hacer pruebas, ignorar por ahora
-    res.send("200 OK");
+    res.send("200 AI BACKEND OK");
 });
 
-async function main() {
-    let matrix = [
-        [16, 2, 16, 2, 16], 
-        [8, 2, 2, 2, 8], 
-        [8, 4, 16, 4, 8], 
-        [4, 16, 4, 16, 4], 
-        [4, 4, 4, 4, 4], 
-        [16, -1, 8, -1, 16]
-    ];
-    let possibleMoves = {
-        '0,0': [ [ 0, 1 ], [ 1, 0 ] ],
-            '0,1': [ [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 0, -1 ], [ 1, -1 ] ],
-            '0,2': [ [ 0, 1 ], [ 1, 0 ], [ 0, -1 ] ],
-            '0,3': [ [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 0, -1 ], [ 1, -1 ] ],
-            '0,4': [ [ 1, 0 ], [ 0, -1 ] ],
-            '1,0': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ] ],
-            '1,1': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ],
-            '1,2': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ],
-            '1,3': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ],
-            '1,4': [ [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ],
-            '2,0': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ] ],
-            '2,1': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ],
-            '2,2': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ],
-            '2,3': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ],
-            '2,4': [ [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ],
-            '3,0': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ] ],
-            '3,1': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ],
-            '3,2': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ],
-            '3,3': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ],
-            '3,4': [ [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ],
-            '4,0': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ] ],
-            '4,1': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ],
-            '4,2': [ [ -1, 0 ], [ -1, 1 ], [ 0, 1 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ],
-            '4,3': [ [ -1, 0 ], [ 0, 1 ], [ 1, 1 ], [ 1, 0 ], [ 1, -1 ], [ 0, -1 ] ],
-            '4,4': [ [ -1, 0 ], [ 1, 0 ], [ 0, -1 ], [ -1, -1 ] ],
-            '5,0': [ [ -1, 0 ], [ -1, 1 ] ],
-            '5,1': [],
-            '5,2': [ [ -1, 0 ], [ -1, 1 ], [ -1, -1 ] ],
-            '5,3': [],
-            '5,4': [ [ -1, 0 ], [ -1, -1 ] ]
-    };
-
-    const prompt = ChatPromptTemplate.fromMessages([
-        ["system", aitools.generateBasePrompt(matrix, possibleMoves)],
-        ["human", "{input}"],
-    ]);
-    const chain = prompt.pipe(model);
-    let possibleSols = utils.chooseNSolutions(matrix, possibleMoves, 10)
-    let movesPrompt = aitools.generateMovementsPrompt(possibleSols);
-    console.log("POSSIBLESOLS", possibleSols);
-    const response = await chain.invoke({
-        input: movesPrompt,
-    });
-    console.log("response", Array.from(response.content)[0]);
-    return ("200 OK");
-}
 
 
 module.exports = router;

@@ -76,6 +76,9 @@ router.post('/save', async (req, res) => {
 
 });
 
+router.get("/", (req, res) => {
+    res.send("200 SINGLEPLAYER BACKEND OK");
+});
 
 
 module.exports = router;
