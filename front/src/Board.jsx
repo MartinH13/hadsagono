@@ -5,7 +5,7 @@ import './Board.css';
 const backEndUrl = (import.meta.env.PROD) ? "" : 'http://localhost:3642';
 
 const Board = () => {
-const modal = document.getElementById("myModal");
+  const modal = document.getElementById("myModal");
   const [selectedHexagons, setSelectedHexagons] = useState([]);
   const [gameCode, setGameCode] = useState(undefined);
   const [isMouseDown, setIsMouseDown] = useState(false);
@@ -190,17 +190,43 @@ const modal = document.getElementById("myModal");
     }
   }
   const postMovesIA = async (moves) => {
-      showModal();
-      const response = await fetch(backEndUrl + '/vs/move', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ moves }),
-      credentials: "include",
-    });
-    const data = await response.json();
+    showModal();
+    var selectedDisadvantage=0;
+    if (selectedOption === "option1") {
+      selectedDisadvantage = 1;
+    } else if (selectedOption === "option2") {
+      selectedDisadvantage = 2;
+    } else if (selectedOption === "option3") {
+      selectedDisadvantage = 3;
+    } else if (selectedOption === "option4") {
+      selectedDisadvantage = 0;
+    }else{
+      0};
+    
+    let response;
+    if (selectedDisadvantage != 0) {
+        response = await fetch(backEndUrl + '/vs/disadvantage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({disadvantage: selectedDisadvantage}),
+        credentials: "include",
+      });
+      } 
+        
 
+      response = await fetch(backEndUrl + '/vs/move', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ moves }),
+        credentials: "include",
+        });
+    
+
+    const data = await response.json();
     if (typeof data.error === 'undefined') {
       // if data contains a code
       if (data.code !== undefined) {
@@ -549,9 +575,9 @@ const modal = document.getElementById("myModal");
                       <div className='dropDownIA'>
                         <select className='dropdown-select' onChange={handleSelectChange} value={selectedOption}>
                           <option value="" hidden>Select a disadvantage for the AI</option>
-                          <option value="option1" disabled={gameIA.score<200}>Max path reduction (200 points)</option>
-                          <option value="option2" disabled={gameIA.score<300}>Information penalty (300 points)</option>
-                          <option value="option3" disabled={gameIA.score<500}>Model degradation (500 points)</option>
+                          <option value="option1" disabled={gameIA.score<2}>Max path reduction (200 points)</option>
+                          <option value="option2" disabled={gameIA.score<3}>Information penalty (300 points)</option>
+                          <option value="option3" disabled={gameIA.score<5}>Model degradation (500 points)</option>
                           <option value="option4" >None</option>
 
                         </select>                    

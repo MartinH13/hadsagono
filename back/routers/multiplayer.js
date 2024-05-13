@@ -147,7 +147,7 @@ router.post('/disadvantage', async (req, res) => {
     let resjson;
     switch (disadvantage) {
         case 1: // Max path reduction - 200 points
-            if (req.session.game.score < 200) {
+            if (req.session.game.score < 2) {
                 res.send({"error": 303});
                 return;
             }
@@ -160,8 +160,8 @@ router.post('/disadvantage', async (req, res) => {
             };
 
             // guardarnos la putada
-            req.session.iaPathGeneration = 5;
-            req.session.consumedDisadvantages.push(1);
+            req.session.iaPathGeneration = 3;
+            req.session.game.consumedDisadvantages.push(1);
             res.send(resjson);
             break;
         case 2: // information penalization - 300 points
