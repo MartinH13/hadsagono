@@ -32,8 +32,15 @@ const Board = () => {
   const [pauseBtn, setPauseBtn] = useState(false);
   const [showPopup, setShowPopup] = useState(true);
   const [inputNull, setInputNull] = useState(false);
-  let inputError = false;
+  const [selectedOption, setSelectedOption] = useState("");
 
+  let inputError = false;
+  const handleSelectChange = (event) => {
+    const selectedValue = event.target.value;
+    setSelectedOption(selectedValue);
+    console.log("valor", selectedValue);
+  };
+   
   const handlePause = () => {
     if (pauseBtn) {
       setPauseBtn(false);
@@ -177,6 +184,9 @@ const Board = () => {
     }
   }
   const postMovesIA = async (moves) => {
+    setGameIA({
+      loaded: false
+    });
     const response = await fetch(backEndUrl + '/vs/move', {
       method: 'POST',
       headers: {
@@ -527,11 +537,13 @@ const Board = () => {
                       </b>
                       </p>
                       <div className='dropDownIA'>
-                        <select className='dropdown-select'>
-                          <option value="" disabled selected>Select a disadvantage for the AI</option>
-                          <option value="option1">Max path reduction</option>
-                          <option value="option2">Information penalty</option>
-                          <option value="option3">Model degradation</option>
+                        <select className='dropdown-select' onChange={handleSelectChange} value={selectedOption}>
+                          <option value="" hidden>Select a disadvantage for the AI</option>
+                          <option value="option1" disabled={gameIA.score<20}>Max path reduction (20 points)</option>
+                          <option value="option2" disabled={gameIA.score<30}>Information penalty (30 points)</option>
+                          <option value="option3" disabled={gameIA.score<50}>Model degradation (50 points)</option>
+                          <option value="option4" >None</option>
+
                         </select>                    
                       </div>
                     </div>
@@ -540,7 +552,10 @@ const Board = () => {
               </>
 
             ) : (
-              <div>Loading game with IA...</div>
+              
+              <div>
+                <p>Waiting AI answer...</p>
+              </div>
             )}
 
 
