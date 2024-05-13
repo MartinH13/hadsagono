@@ -539,9 +539,9 @@ const Board = () => {
                       <div className='dropDownIA'>
                         <select className='dropdown-select' onChange={handleSelectChange} value={selectedOption}>
                           <option value="" hidden>Select a disadvantage for the AI</option>
-                          <option value="option1" disabled={gameIA.score<20}>Max path reduction (20 points)</option>
-                          <option value="option2" disabled={gameIA.score<30}>Information penalty (30 points)</option>
-                          <option value="option3" disabled={gameIA.score<50}>Model degradation (50 points)</option>
+                          <option value="option1" disabled={gameIA.score<200}>Max path reduction (200 points)</option>
+                          <option value="option2" disabled={gameIA.score<300}>Information penalty (300 points)</option>
+                          <option value="option3" disabled={gameIA.score<500}>Model degradation (500 points)</option>
                           <option value="option4" >None</option>
 
                         </select>                    

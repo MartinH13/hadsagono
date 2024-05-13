@@ -111,7 +111,7 @@ router.post('/move', async (req, res) => {
         "score": b.score,
         "iascore": bAI.score,
         "iaPathGeneration" : parsedData.iaPathGeneration,
-        "consumedDisadvantages": parsedData.iaPathGeneration,
+        "consumedDisadvantages": parsedData.consumedDisadvantages,
         "iaResult" : aiResu
     };
 
@@ -221,7 +221,7 @@ router.post('/disadvantage', async (req, res) => {
 
 
 
-            
+
 
 
             // IMPLEMENTAR LA PUTADA // TODO
