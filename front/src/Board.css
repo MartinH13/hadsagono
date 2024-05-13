@@ -258,3 +258,44 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
 
 }
+
+.modal {
+  display: none;
+  position: fixed; 
+  z-index: 999999; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgb(0,0,0); 
+  background-color: rgba(0,0,0,0.4); 
+}
+
+.modal-content {
+  background-color: #bbada0 ;
+  margin: 20% auto;
+  height: 15%; 
+  border-color: 1px solid #888;
+  padding: 20px;
+  border-radius: 15px;
+  width: 40%; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 1.2em;  
+}
+.loader {
+  border: 6px solid #f3f3f3; 
+  border-top: 6px solid #EDC22E; 
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

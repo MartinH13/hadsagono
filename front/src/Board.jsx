@@ -5,7 +5,7 @@ import './Board.css';
 const backEndUrl = (import.meta.env.PROD) ? "" : 'http://localhost:3642';
 
 const Board = () => {
-
+const modal = document.getElementById("myModal");
   const [selectedHexagons, setSelectedHexagons] = useState([]);
   const [gameCode, setGameCode] = useState(undefined);
   const [isMouseDown, setIsMouseDown] = useState(false);
@@ -41,6 +41,12 @@ const Board = () => {
     console.log("valor", selectedValue);
   };
    
+  const showModal = function() {
+    modal.style.display = "block";
+  }
+  const hideModal = function() {
+    modal.style.display = "none";
+  }
   const handlePause = () => {
     if (pauseBtn) {
       setPauseBtn(false);
@@ -184,10 +190,8 @@ const Board = () => {
     }
   }
   const postMovesIA = async (moves) => {
-    setGameIA({
-      loaded: false
-    });
-    const response = await fetch(backEndUrl + '/vs/move', {
+      showModal();
+      const response = await fetch(backEndUrl + '/vs/move', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -211,10 +215,13 @@ const Board = () => {
         iaResult: data.iaResult
 
       });
+      hideModal();
 
     } else {
       setTimeout(() => setApplyStyle(true), 100);
       setTimeout(() => setApplyStyle(false), 700);
+      hideModal();
+
 
     }
 
@@ -469,9 +476,12 @@ const Board = () => {
               <>
                 <h3 style={{ textAlign: 'center', marginBottom: '-30px ', height: '30px'}}>{typeof gameCode !== 'undefined' && <span> GAME CODE: {gameCode}</span>}</h3>
                 <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-
-
-
+                  <div id="myModal" className="modal">
+                    <div className="modal-content">
+                      <p>Waiting the AI to answer...</p>
+                      <div className="loader"></div>
+                    </div>
+                  </div>
                   <div className='containerWithNoIA' style={{ marginRight: '10px' }}>
                     <h3>SCORE: {gameIA.score} </h3>
                     <div className={`container ${applyStyle ? 'shake' : ''}`} style={applyStyle ? { backgroundColor: '#DE7676' } : {}}>
@@ -554,7 +564,7 @@ const Board = () => {
             ) : (
               
               <div>
-                <p>Waiting AI answer...</p>
+                <p>Loading game with AI...</p>
               </div>
             )}
 
