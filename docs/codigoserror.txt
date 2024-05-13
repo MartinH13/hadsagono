@@ -29,4 +29,5 @@ Errores de dataAccess:
 Error de IA:
 ------
 302 = La IA ha sido incapaz de escoger un número de los que se le han pasado, o no lo ha devuelto de la manera correcta
-303 = No tienes suficientes puntos como para hacer la putada!
+303 = No tienes suficientes puntos como para hacer implementar la desventaja!
+304 = Has enviado una codigo de desventaja no reconocido por el backend

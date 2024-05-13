@@ -26,6 +26,7 @@ const boardAISchema = new Schema({
   ai: {type: Boolean, default: false},
   aiBoard: [{type: [], default: []}],
   aiScore : {type: Number, default: 0},
+  consumedDisadvantages : [{type: [], default: []}],
   date: { type: Date, default: Date.now }
 });
 
@@ -57,7 +58,7 @@ class DataAccess {
     }
   }
 
-  static async saveAI(board, score, movecount, code, ai, aiBoard, aiScore) {
+  static async saveAI(board, score, movecount, code, ai, aiBoard, aiScore, consumedDisadvantages) {
     try {
       // Check if the code exists in the db
       const codeExists = await DataAccess.codeExists(code);
@@ -66,7 +67,7 @@ class DataAccess {
         // If the code exists, update the document
         await Board.updateOne(
           { code: code },
-          { $set: { board: board, score: score, movecount: movecount, ai: ai, aiBoard: aiBoard, aiScore: aiScore } }
+          { $set: { board: board, score: score, movecount: movecount, ai: ai, aiBoard: aiBoard, aiScore: aiScore, consumedDisadvantages : consumedDisadvantages } }
         );
       } else if (codeExists == 0) {
         // If the code doesn't exist, insert a new document
