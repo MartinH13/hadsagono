@@ -16,6 +16,8 @@ const prompt = ChatPromptTemplate.fromMessages([
 ]);
 const chain = prompt.pipe(model);
 
+const DEFAULT_PATH_GENERATION_LENGTH = 10;
+
 router.get('/new', async (req, res) => {
 
     // generate new code for the game.
@@ -29,8 +31,9 @@ router.get('/new', async (req, res) => {
         "score": b.score,
         "iascore": bia.score,
         "movecount" : b.movecount,
-        "iaPathGeneration" : 10, // ia will by default find paths of 10
+        "iaPathGeneration" : DEFAULT_PATH_GENERATION_LENGTH,
         "possibleMoves": b.possibleMoves,
+        "consumedDisadvantages": [],
         "code": b.code
     };
     req.session.game = resjson;
@@ -75,6 +78,10 @@ router.post('/move', async (req, res) => {
         res.send({"error": resu});
         return;
     }
+    // just in case the game hasn't been loaded with the default path generation metric
+    if (typeof parsedData.iaPathGeneration === 'undefined') {
+        parsedData.iaPathGeneration = DEFAULT_PATH_GENERATION_LENGTH;
+    }
     let possibleSols = utils.chooseNSolutions(bAI.board, parsedData.possibleMoves, parsedData.iaPathGeneration)
     let movesPrompt = aitools.generateMovementsPrompt(bAI.board, parsedData.possibleMoves, possibleSols);
     const response = await chain.invoke({
@@ -104,6 +111,7 @@ router.post('/move', async (req, res) => {
         "score": b.score,
         "iascore": bAI.score,
         "iaPathGeneration" : parsedData.iaPathGeneration,
+        "consumedDisadvantages": parsedData.iaPathGeneration,
         "iaResult" : aiResu
     };
 
@@ -115,6 +123,7 @@ router.post('/move', async (req, res) => {
         "iascore": bAI.score,
         "iaPathGeneration": parsedData.iaPathGeneration,
         "movecount" : b.movecount,
+        "consumedDisadvantages": parsedData.consumedDisadvantages,
         "possibleMoves": b.possibleMoves,
         "code": b.code
     };
@@ -122,7 +131,7 @@ router.post('/move', async (req, res) => {
     req.session.game = sess;
     // Guardar cada 3 turnos
     if (b.movecount % 3 == 0) {
-        await db.saveAI(b.board, b.score, b.movecount, b.code, true, bAI.board, bAI.score);
+        await db.saveAI(b.board, b.score, b.movecount, b.code, true, bAI.board, bAI.score, parsedData.consumedDisadvantages);
         resjson["code"] = b.code;
     }
     res.send(resjson);
@@ -135,6 +144,7 @@ router.post('/disadvantage', async (req, res) => {
         return;
     }
     let disadvantage = req.body.disadvantage;
+    let resjson;
     switch (disadvantage) {
         case 1: // Max path reduction - 200 points
             if (req.session.game.score < 200) {
@@ -142,7 +152,7 @@ router.post('/disadvantage', async (req, res) => {
                 return;
             }
             req.session.game.score -= 200;
-            let resjson = {
+            resjson = {
                 "board": req.session.game.board,
                 "iaboard": req.session.iaboard,
                 "score": req.session.score,
@@ -151,16 +161,82 @@ router.post('/disadvantage', async (req, res) => {
 
             // guardarnos la putada
             req.session.iaPathGeneration = 5;
-
+            req.session.consumedDisadvantages.push(1);
             res.send(resjson);
             break;
         case 2: // information penalization - 300 points
-            req.session.game.possibleMoves = req.session.game.possibleMoves.slice(0, -1);
+            if (req.session.game.score < 200) {
+                res.send({"error": 303});
+                return;
+            }
+            req.session.game.score -= 300;
+            resjson = {
+                "board": req.session.game.board,
+                "iaboard": req.session.iaboard,
+                "score": req.session.score,
+                "iascore": req.session.iascore,
+            };
+
+            // guardarnos la putada
+            req.session.consumedDisadvantages.push(2);
+
+
+
+
+
+
+            // IMPLEMENTAR LA PUTADA // TODO
+            // MARTIN AQUI VA EL CODIGO
+            // TAMBIEN HAY QUE METERLO EN EL LOAD.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+            res.send(resjson);
             break;
         case 3: // model penalization - 400 points
-            req.session.game.possibleMoves = req.session.game.possibleMoves.slice(1, -1);
+            if (req.session.game.score < 200) {
+                res.send({"error": 303});
+                return;
+            }
+            req.session.game.score -= 400;
+            resjson = {
+                "board": req.session.game.board,
+                "iaboard": req.session.iaboard,
+                "score": req.session.score,
+                "iascore": req.session.iascore,
+            };
+
+            // guardarnos la putada
+            req.session.consumedDisadvantages.push(3);
+
+
+
+            
+
+
+            // IMPLEMENTAR LA PUTADA // TODO
+            // MARTIN AQUI VA EL CODIGO
+            // TAMBIEN HAY QUE METERLO EN EL LOAD.js
+
+
+
+
+
+
+            res.send(resjson);
             break;
         default:
+            res.send({"error": 304});
             break;
     }
 });
