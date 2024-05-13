@@ -3,6 +3,7 @@ let router = express.Router();
 let Board = require('../logic/board.js');
 let db = require('../logic/dataAccess.js');
 let utils = require('../logic/utils.js');
+let aitools = require('../logic/aiPrompts.js');
 let ChatGroq = require("@langchain/groq").ChatGroq;
 let ChatPromptTemplate = require("@langchain/core/prompts").ChatPromptTemplate;
 require('dotenv').config();
@@ -51,14 +52,15 @@ router.post('/move', async (req, res) => {
         score: parsedData.score,
         code: parsedData.code,
         movecount: parsedData.movecount,
+        possibleMoves: parsedData.possibleMoves
    };
 
     const json2 = {
         board: parsedData.iaboard,
         score: parsedData.iascore,
         code: parsedData.code,
-        movecount: parsedData.movecount
-
+        movecount: parsedData.movecount,
+        possibleMoves: parsedData.possibleMoves
     };
 
     let b = new Board(json1, game.code);
@@ -70,15 +72,23 @@ router.post('/move', async (req, res) => {
     }
 
     // AI move
-    // de momento, cogemos el primer camino de 3 que haya -- MARTIN CAMBIA ESTO
-    let aiMove1 = utils.findSolutions(bAI.board, bAI.possibleMoves, 15);
-    if (!aiMove1) {
-        //Aqui hay que meter comunicacion con frontend para acabar la partida
-        console.log("No hay movimientos IA");
-        return;
+    const prompt = ChatPromptTemplate.fromMessages([
+        ["system", aitools.generateBasePrompt(bAI.board, parsedData.possibleMoves)],
+        ["human", "{input}"],
+    ]);
+    const chain = prompt.pipe(model);
+    let possibleSols = utils.chooseNSolutions(bAI.board, parsedData.possibleMoves, 10)
+    let movesPrompt = aitools.generateMovementsPrompt(possibleSols);
+    const response = await chain.invoke({
+        input: movesPrompt,
+    });
+    let iachoose = Array.from(response.content)[0];
+    let aiMove = null;
+    try {
+        aiMove = utils.transformPathToMoves(possibleSols[Number(iachoose)-1]);
+    } catch (error) {
+        ; // NOP
     }
-    let aiMove = utils.transformPathToMoves(aiMove1[0]);
-    console.log(aiMove);
     
     let playerMove1 = utils.findSolutions(b.board, b.possibleMoves, 15);
     if (!playerMove1) {
@@ -88,7 +98,7 @@ router.post('/move', async (req, res) => {
     }
     
     let aiJsonMove = {"nodes": aiMove};
-    let aiResu = bAI.executeMove(aiJsonMove);
+    let aiResu = (aiMove === null) ? 302 : bAI.executeMove(aiJsonMove);
 
     let resjson = {
         "board": b.board,
@@ -166,19 +176,18 @@ async function main() {
             '5,4': [ [ -1, 0 ], [ -1, -1 ] ]
     };
 
-    //let sol = utils.findFirstPath(matrix, possibleMoves,1,1,[]);
-    let sol = utils.findSolutions(matrix,possibleMoves,10);
-        console.log(sol);
-
-        const prompt = ChatPromptTemplate.fromMessages([
-            ["system", "You are a helpful assistant"],
-            ["human", "{input}"],
-          ]);
-          const chain = prompt.pipe(model);
-          const response = await chain.invoke({
-            input: "Hello",
-          });
-          console.log("response", response);
+    const prompt = ChatPromptTemplate.fromMessages([
+        ["system", aitools.generateBasePrompt(matrix, possibleMoves)],
+        ["human", "{input}"],
+    ]);
+    const chain = prompt.pipe(model);
+    let possibleSols = utils.chooseNSolutions(matrix, possibleMoves, 10)
+    let movesPrompt = aitools.generateMovementsPrompt(possibleSols);
+    console.log("POSSIBLESOLS", possibleSols);
+    const response = await chain.invoke({
+        input: movesPrompt,
+    });
+    console.log("response", Array.from(response.content)[0]);
     return ("200 OK");
 }
 

@@ -25,3 +25,7 @@ Errores de dataAccess:
 283 = Error guardando
 284 = Error haciendo 'load'. El código existe tanto para single como para vs. Se borran ambos y devuelve error.
 777 = Error genérico base de datos
+
+Error de IA:
+------
+302 = La IA ha sido incapaz de escoger un número de los que se le han pasado, o no lo ha devuelto de la manera correcta

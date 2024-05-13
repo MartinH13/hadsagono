@@ -84,8 +84,8 @@ class Utils {
         return moves;
     }
 
-    static chooseNSolutions(matrix, movements, n=5) {
-        const arr = Utils.findSolutions(matrix, movements);
+    static chooseNSolutions(matrix, movements, minLength=6,n=5) {
+        const arr = Utils.findSolutions(matrix, movements, minLength);
         if (n >= arr.length) {
             return arr.slice();
           }
