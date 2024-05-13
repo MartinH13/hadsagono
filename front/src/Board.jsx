@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiMenu } from 'react-icons/fi';
-import Snackbar from 'node-snackbar';
 import './Board.css';
-import 'node-snackbar/dist/snackbar.min.css';
 
 const backEndUrl = (import.meta.env.PROD) ? "" : 'http://localhost:3642';
 
@@ -27,7 +25,8 @@ const Board = () => {
     score: 0,
     iaBoardData: null,
     iascore: 0,
-    code: null
+    code: null,
+    iaResult: null
   });
 
   const [pauseBtn, setPauseBtn] = useState(false);
@@ -138,11 +137,11 @@ const Board = () => {
           boardData: data.board,
           score: data.score,
           iaBoardData: data.iaboard,
-          iascore: data.iascore
+          iascore: data.iascore,
+          iaResult: null
         });
       }
       inputError = false;
-      Snackbar.show({ text: `Loaded game with code "${data.code}" !`, duration: 3750, pos: 'bottom-center', showAction: false});
     } else {
       inputError = true;
     }
@@ -163,11 +162,6 @@ const Board = () => {
     if (typeof data.error === 'undefined') {
       // if data contains a code
       if (data.code !== undefined) {
-        if (gameCode === undefined) {
-          Snackbar.show({ text: `Game saved with code "${data.code}"!`, duration: 3750, pos: 'bottom-center', showAction: false});
-        } else {
-          Snackbar.show({ text: 'Game saved!', pos: 'bottom-center', duration: 1000, showAction: false});
-        }
         setGameCode(data.code);
       }
 
@@ -196,11 +190,6 @@ const Board = () => {
     if (typeof data.error === 'undefined') {
       // if data contains a code
       if (data.code !== undefined) {
-        if (gameCode === undefined) {
-          Snackbar.show({ text: `Game saved with code "${data.code}"!`, duration: 3750, pos: 'bottom-center', showAction: false});
-        } else {
-          Snackbar.show({ text: 'Game saved!', pos: 'bottom-center', duration: 1000, showAction: false});
-        }
         setGameCode(data.code);
       }
       setGameIA({
@@ -208,7 +197,8 @@ const Board = () => {
         boardData: data.board,
         score: data.score,
         iaBoardData: data.iaboard,
-        iascore: data.iascore
+        iascore: data.iascore,
+        iaResult: data.iaResult
 
       });
 
@@ -236,7 +226,8 @@ const Board = () => {
       score: data.score,
       iaBoardData: data.iaboard,
       iascore: data.iascore,
-      code: data.code
+      code: data.code,
+      iaResult: null
     });
 
 
@@ -393,6 +384,18 @@ const Board = () => {
     setSelectedHexagons([]);
 
   };
+  function getResultMessage(result) {
+    switch (result) {
+      case 100:
+        return "AI MADE A CORRECT MOVE!";
+      case 256:
+        return "SELECTED NODES WERE NOT JOINED!";
+      case 257:
+        return "AI MADE AN ILLEGAL MOVE!";
+      default:
+        return "AI FOUND PROBLEMS...";
+    }
+  }
 
   return showPopup ? (
     <>
@@ -454,7 +457,7 @@ const Board = () => {
           <>
             {gameIA.loaded ? (
               <>
-                <h3 style={{ textAlign: 'center', marginBottom: '-30px ' }}>{typeof gameCode !== 'undefined' && <span> GAME CODE: {gameCode}</span>}</h3>
+                <h3 style={{ textAlign: 'center', marginBottom: '-30px ', height: '30px'}}>{typeof gameCode !== 'undefined' && <span> GAME CODE: {gameCode}</span>}</h3>
                 <div style={{ display: 'flex', justifyContent: 'space-around' }}>
 
 
@@ -515,7 +518,22 @@ const Board = () => {
                       ))}
                     </div>
                     <div style={{ marginTop: '-50px' }}>
-                      <p><b>HOLA MENSAJE DE PRUEBA</b></p>
+                      
+                      <p>
+                        <b> {gameIA.iaResult === null
+                              ? "DO YOUR MOVE!"
+                              :getResultMessage(gameIA.iaResult)
+                            }
+                      </b>
+                      </p>
+                      <div className='dropDownIA'>
+                        <select className='dropdown-select'>
+                          <option value="" disabled selected>Select a disadvantage for the AI</option>
+                          <option value="option1">Max path reduction</option>
+                          <option value="option2">Information penalty</option>
+                          <option value="option3">Model degradation</option>
+                        </select>                    
+                      </div>
                     </div>
                   </div>
                 </div>
