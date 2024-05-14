@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FiMenu } from 'react-icons/fi';
 import './Board.css';
+import SnackBar from 'node-snackbar';
+import 'node-snackbar/dist/snackbar.css'; 
+
 
 const backEndUrl = (import.meta.env.PROD) ? "" : 'http://localhost:3642';
 
@@ -35,10 +38,51 @@ const Board = () => {
   const [selectedOption, setSelectedOption] = useState("");
 
   let inputError = false;
-  const handleSelectChange = (event) => {
+  const handleSelectChange = async (event) => {
     const selectedValue = event.target.value;
     setSelectedOption(selectedValue);
-    console.log("valor", selectedValue);
+    var selectedDisadvantage=0;
+    if (selectedValue === "option1") {
+      selectedDisadvantage = 1;
+    } else if (selectedValue === "option2") {
+      selectedDisadvantage = 2;
+    } else if (selectedValue === "option3") {
+      selectedDisadvantage = 3;
+    }
+    const  response = await fetch(backEndUrl + '/vs/disadvantage', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({disadvantage: selectedDisadvantage}),
+      credentials: "include",
+    });
+    const data = await response.json();
+    //porsiacaso no vaya a ser que falle
+    try {
+      setGameIA({
+        loaded: true,
+        boardData: data.board,
+        score: data.score,
+        iaBoardData: data.iaboard,
+        iascore: data.iascore
+      });
+      if (selectedValue === "option1") {
+        SnackBar.show({text: "Challenge accepted! Reduced paths won't stop me from outplaying you. Let the games begin! ", pos: 'bottom-center', actionText: 'OK', actionTextColor: '#fff', backgroundColor: '#333', duration: 5000});
+        event.target.remove(event.target.selectedIndex);
+
+      } else if (selectedValue === "option2") {
+        SnackBar.show({text: "Less information? No problem! I'll still find a way to beat you. Bring it on, human!", pos: 'bottom-center', actionText: 'OK', actionTextColor: '#fff', backgroundColor: '#333', duration: 5000});
+        event.target.remove(event.target.selectedIndex);
+
+      } else if (selectedValue === "option3") {
+        SnackBar.show({text: "Model degradation? Pfft, I can handle a little glitch. I'm still gonna crush you, even if I'm not at my best!", pos: 'bottom-center', actionText: 'OK', actionTextColor: '#fff', backgroundColor: '#333', duration: 5000});
+        event.target.remove(event.target.selectedIndex);
+      } 
+    } catch (error) {
+      console.log("An error occurred trying to apply de disadvantage", error);
+    }
+    
   };
    
   const showModal = function() {
@@ -191,39 +235,14 @@ const Board = () => {
   }
   const postMovesIA = async (moves) => {
     showModal();
-    var selectedDisadvantage=0;
-    if (selectedOption === "option1") {
-      selectedDisadvantage = 1;
-    } else if (selectedOption === "option2") {
-      selectedDisadvantage = 2;
-    } else if (selectedOption === "option3") {
-      selectedDisadvantage = 3;
-    } else if (selectedOption === "option4") {
-      selectedDisadvantage = 0;
-    }else{
-      0};
-    
-    let response;
-    if (selectedDisadvantage != 0) {
-        response = await fetch(backEndUrl + '/vs/disadvantage', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({disadvantage: selectedDisadvantage}),
-        credentials: "include",
-      });
-      } 
-        
-
-      response = await fetch(backEndUrl + '/vs/move', {
+      const response = await fetch(backEndUrl + '/vs/move', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ moves }),
         credentials: "include",
-        });
+      });
     
 
     const data = await response.json();
@@ -575,10 +594,9 @@ const Board = () => {
                       <div className='dropDownIA'>
                         <select className='dropdown-select' onChange={handleSelectChange} value={selectedOption}>
                           <option value="" hidden>Select a disadvantage for the AI</option>
-                          <option value="option1" disabled={gameIA.score<2}>Max path reduction (200 points)</option>
-                          <option value="option2" disabled={gameIA.score<3}>Information penalty (300 points)</option>
-                          <option value="option3" disabled={gameIA.score<5}>Model degradation (500 points)</option>
-                          <option value="option4" >None</option>
+                          <option value="option1" disabled={gameIA.score<20}>Max path reduction (20 points)</option>
+                          <option value="option2" disabled={gameIA.score<30}>Information penalty (30 points)</option>
+                          <option value="option3" disabled={gameIA.score<50}>Model degradation (50 points)</option>
 
                         </select>                    
                       </div>
