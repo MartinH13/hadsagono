@@ -147,16 +147,16 @@ router.post('/disadvantage', async (req, res) => {
     let resjson;
     switch (disadvantage) {
         case 1: // Max path reduction - 200 points
-            if (req.session.game.score < 200) {
+            if (req.session.game.score < 20) {
                 res.send({"error": 303});
                 return;
             }
-            req.session.game.score -= 200;
+            req.session.game.score -= 20;
             resjson = {
                 "board": req.session.game.board,
-                "iaboard": req.session.iaboard,
-                "score": req.session.score,
-                "iascore": req.session.iascore,
+                "iaboard": req.session.game.iaboard,
+                "score": req.session.game.score,
+                "iascore": req.session.game.iascore,
             };
 
             // guardarnos la putada
