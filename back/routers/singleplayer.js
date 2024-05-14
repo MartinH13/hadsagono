@@ -2,6 +2,7 @@ let express = require('express');
 let router = express.Router();
 let Board = require('../logic/board.js');
 let db = require('../logic/dataAccess.js');
+let utils = require('../logic/utils.js');
 
 router.get('/new', async (req, res) => {
     // generate new code for the game.
@@ -42,6 +43,13 @@ router.post('/move', async (req, res) => {
         "board": b.board,
         "score": b.score
     };
+
+    let playerMove1 = utils.findSolutions(b.board, b.possibleMoves, 3);
+    if (!playerMove1) {
+        console.log("No hay movimientos Player");
+        res.send({"error": 258});
+        return;
+    }
 
     req.session.game = b;
     // Guardar cada 3 turnos

@@ -94,7 +94,8 @@ router.post('/move', async (req, res) => {
 
     if (!possibleSols) {
         console.log("No hay movimientos IA");
-        return 259;
+        res.send({"error": 259});
+        return;
     }
 
     let movesPrompt = aitools.generateMovementsPrompt(bAI.board, parsedData.possibleMoves, possibleSols, req.session.game.consumedDisadvantages);
@@ -111,10 +112,11 @@ router.post('/move', async (req, res) => {
         ; // NOP
     }
 
-    let playerMove1 = utils.findSolutions(b.board, b.possibleMoves, 15);
+    let playerMove1 = utils.findSolutions(b.board, b.possibleMoves, 3);
     if (!playerMove1) {
         console.log("No hay movimientos Player");
-        return 258;
+        res.send({"error": 258});
+        return;
     }
     
     let aiJsonMove = {"nodes": aiMove};
@@ -180,16 +182,16 @@ router.post('/disadvantage', async (req, res) => {
             res.send(resjson);
             break;
         case 2: // information penalization - 300 points
-            if (req.session.game.score < 200) {
+            if (req.session.game.score < 30) {
                 res.send({"error": 303});
                 return;
             }
-            req.session.game.score -= 300;
+            req.session.game.score -= 30;
             resjson = {
                 "board": req.session.game.board,
-                "iaboard": req.session.iaboard,
-                "score": req.session.score,
-                "iascore": req.session.iascore,
+                "iaboard": req.session.game.iaboard,
+                "score": req.session.game.score,
+                "iascore": req.session.game.iascore,
             };
 
             // guardarnos la desventaja
@@ -198,16 +200,16 @@ router.post('/disadvantage', async (req, res) => {
             res.send(resjson);
             break;
         case 3: // model penalization - 400 points
-            if (req.session.game.score < 200) {
+            if (req.session.game.score < 50) {
                 res.send({"error": 303});
                 return;
             }
-            req.session.game.score -= 400;
+            req.session.game.score -= 50;
             resjson = {
                 "board": req.session.game.board,
-                "iaboard": req.session.iaboard,
-                "score": req.session.score,
-                "iascore": req.session.iascore,
+                "iaboard": req.session.game.iaboard,
+                "score": req.session.game.score,
+                "iascore": req.session.game.iascore,
             };
 
             // guardarnos la desventaja

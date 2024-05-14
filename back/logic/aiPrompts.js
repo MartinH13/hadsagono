@@ -29,7 +29,7 @@ class Prompts {
             This is the matrix:
             ${matrix.slice(0, 3).map(row => row.slice(0, 3))}
             The array of possible movements is this:
-            ${possibleMoves.slice(0, 3).map(row => row.slice(0, 3))}
+            ${possibleMoves}
             
             `;
             resprompt+= "Possible Plays you have to choose: \n";
