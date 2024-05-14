@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import { FiMenu } from 'react-icons/fi';
 import './Board.css';
 import SnackBar from 'node-snackbar';
@@ -9,6 +9,7 @@ const backEndUrl = (import.meta.env.PROD) ? "" : 'http://localhost:3642';
 
 const Board = () => {
   const modal = document.getElementById("myModal");
+  const modalEndGame = document.getElementById("myModalEndGame");
   const [selectedHexagons, setSelectedHexagons] = useState([]);
   const [gameCode, setGameCode] = useState(undefined);
   const [isMouseDown, setIsMouseDown] = useState(false);
@@ -30,7 +31,7 @@ const Board = () => {
     iascore: 0,
     code: null,
     iaResult: null
-  });
+  })
 
   const [pauseBtn, setPauseBtn] = useState(false);
   const [showPopup, setShowPopup] = useState(true);
@@ -91,6 +92,12 @@ const Board = () => {
   const hideModal = function() {
     modal.style.display = "none";
   }
+  const showModaEndGame = function() {
+    modalEndGame.style.display = "block";
+  }
+  const hideModalEndGame = function() {
+    modalEndGame.style.display = "none";
+  }
   const handlePause = () => {
     if (pauseBtn) {
       setPauseBtn(false);
@@ -146,6 +153,7 @@ const Board = () => {
 
 
   const startGame = async () => {
+    
     setGameState({
       loaded: false
     });
@@ -228,9 +236,13 @@ const Board = () => {
         score: data.score,
       });
     } else {
+      if(data.error === 258){
+        console.log("error");
+        showModaEndGame();
+      }else{
       setTimeout(() => setApplyStyle(true), 100);
       setTimeout(() => setApplyStyle(false), 700);
-
+    }
     }
   }
   const postMovesIA = async (moves) => {
@@ -263,10 +275,13 @@ const Board = () => {
       hideModal();
 
     } else {
+      if(data.error === 259 || data.error === 258){
+        showModaEndGame();
+      }else{
       setTimeout(() => setApplyStyle(true), 100);
       setTimeout(() => setApplyStyle(false), 700);
       hideModal();
-
+      }
 
     }
 
@@ -296,9 +311,17 @@ const Board = () => {
 
   const getHexagonColor = (value) => {
     const colors = [
-      '#EEE4DA', '#EDCC61', '#F2B179', '#F59563',
-      '#F67C5F', '#F65E3B', '#EDCF72', '#EDE0C8',
-      '#EDC850', '#EDC53F', '#EDC22E'
+      '#F0E8E0', // Light beige
+      '#F0D977', // Light yellow
+      '#F4C295', // Light orange
+      '#F7AF8B', // Medium orange
+      '#F99580', // Warm red
+      '#FA7D66', // Dark orange
+      '#F0D586', // Light yellow-green
+      '#F0E6D4', // Slightly darker beige
+      '#F0D04C', // Medium yellow
+      '#F0C742', // Slightly darker yellow
+      '#F0BF39'  // Dark yellow
     ];
     const index = Math.log2(value) - 1;
     return colors[index % colors.length];
@@ -525,6 +548,17 @@ const Board = () => {
                       <div className="loader"></div>
                     </div>
                   </div>
+                  <div id="myModalEndGame" className="modalEndGame">
+                    <div className="modalEndGame-content">
+                      <p><b>GAME ENDED</b></p>
+                      <p>No more possible moves available</p>
+                      {gameIA.score === gameIA.iascore ? (<p><b>TIE!</b></p>) : gameIA.score > gameIA.iascore ? (<p><b>YOU WON!</b></p>) : (<p><b>YOU LOSE!</b></p>)}
+                      <p>YOUR FINAL SCORE IS: <b>{gameIA.score} points</b> </p>
+                      <p>AI FINAL SCORE IS: <b>{gameIA.iascore} points</b> </p>
+                      <button onClick={handleNewGame}>New Game</button>
+                      <button onClick={handleNewGameWithIA}>New Game with AI</button>
+                    </div>
+                  </div>
                   <div className='containerWithNoIA' style={{ marginRight: '10px' }}>
                     <h3>SCORE: {gameIA.score} </h3>
                     <div className={`container ${applyStyle ? 'shake' : ''}`} style={applyStyle ? { backgroundColor: '#DE7676' } : {}}>
@@ -618,7 +652,15 @@ const Board = () => {
 
               <>
                 <h3>SCORE: {gameState.score} {typeof gameCode !== 'undefined' && <span> || GAME CODE: {gameCode}</span>} </h3>
-
+                <div id="myModalEndGame" className="modalEndGame">
+                    <div className="modalEndGame-content">
+                      <p><b>GAME ENDED </b></p>
+                      <p>No more possible moves available</p>
+                      <p>YOUR FINAL SCORE IS: <b>{gameState.score} points</b> </p>
+                      <button onClick={handleNewGame}>New Game</button>
+                      <button onClick={handleNewGameWithIA}>New Game with AI</button>
+                    </div>
+                </div>
                 <div className={`container ${applyStyle ? 'shake' : ''}`} style={applyStyle ? { backgroundColor: '#DE7676' } : {}}>
 
                   {gameState.boardData.map((row, rowIndex) => (

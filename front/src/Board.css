@@ -265,7 +265,7 @@
 
 }
 
-.modal {
+.modal, .modalEndGame {
   display: none;
   position: fixed; 
   z-index: 999999; 
@@ -275,11 +275,30 @@
   height: 100%; 
   overflow: auto; 
   background-color: rgb(0,0,0); 
-  background-color: rgba(0,0,0,0.4); 
+  background-color: rgba(0,0,0,0.5); 
 }
 
-.modal-content {
-  background-color: #bbada0 ;
+.modalEndGame-content{
+  height: 40%!important;
+  width: 45%!important;
+}
+.modalEndGame-content button{
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1em;
+  color: white;
+  background-color: #bbada0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 90%; 
+  text-align: center; 
+}
+.modalEndGame-content button:hover {
+  background-color: #EDC22E;
+}
+.modal-content, .modalEndGame-content {
+  background-color: white ;
   margin: 20% auto;
   height: 15%; 
   border-color: 1px solid #888;
@@ -291,6 +310,9 @@
   align-items: center;
   flex-direction: column;
   font-size: 1.2em;  
+}
+.modalEndGame-content p{
+  margin-top: -20px;
 }
 .loader {
   border: 6px solid #f3f3f3; 
