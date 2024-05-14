@@ -9,18 +9,36 @@ class Prompts {
         `;
     }
 
-    static generateMovementsPrompt(matrix, possibleMoves, movements) {
-        let resprompt = `This is the matrix:
-        ${matrix}
-        The array of possible movements is this:
-        ${possibleMoves}
-        
-        `;
-        resprompt+= "Possible Plays you have to choose: \n";
-        for (let i = 0; i < movements.length; i++) {
-            resprompt += `${i}: ${movements[i]}\n`;
+    static generateMovementsPrompt(matrix, possibleMoves, movements, disadvantages) {
+        if (!disadvantages.includes(2)){
+            let resprompt = `This is the matrix:
+            ${matrix}
+            The array of possible movements is this:
+            ${possibleMoves}
+            
+            `;
+            resprompt+= "Possible Plays you have to choose: \n";
+            for (let i = 0; i < movements.length; i++) {
+                resprompt += `${i}: ${movements[i]}\n`;
+            }
+            return resprompt;
         }
-        return resprompt;
+        else{
+            let resprompt = `
+            You are playing with a disadvantage where you won't be able to see some of the information about the possible plays.
+            This is the matrix:
+            ${matrix.slice(0, 3).map(row => row.slice(0, 3))}
+            The array of possible movements is this:
+            ${possibleMoves.slice(0, 3).map(row => row.slice(0, 3))}
+            
+            `;
+            resprompt+= "Possible Plays you have to choose: \n";
+            for (let i = 0; i < movements.length; i++) {
+                resprompt += `${i}: ${movements[i]}\n`;
+            }
+            resprompt += "Possible Plays you have to choose: \n";
+            return resprompt;
+        }
     }
 }
 

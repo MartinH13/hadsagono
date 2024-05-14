@@ -7,14 +7,22 @@ let aitools = require('../logic/aiPrompts.js');
 let ChatGroq = require("@langchain/groq").ChatGroq;
 let ChatPromptTemplate = require("@langchain/core/prompts").ChatPromptTemplate;
 require('dotenv').config();
+
+
 const model = new ChatGroq({
     apiKey: process.env.GROQ_KEY_1,
+    model: "llama3-70b-8192",
   });
+  const model2 = new ChatGroq({
+    apiKey: process.env.GROQ_KEY_1,
+    model: "gemma-7b-it",
+  });
+
 const prompt = ChatPromptTemplate.fromMessages([
     ["system", aitools.generateBasePrompt()],
     ["human", "{input}"],
 ]);
-const chain = prompt.pipe(model);
+//const chain = prompt.pipe(model);
 
 const DEFAULT_PATH_GENERATION_LENGTH = 10;
 
@@ -83,23 +91,30 @@ router.post('/move', async (req, res) => {
         parsedData.iaPathGeneration = DEFAULT_PATH_GENERATION_LENGTH;
     }
     let possibleSols = utils.chooseNSolutions(bAI.board, parsedData.possibleMoves, parsedData.iaPathGeneration)
-    let movesPrompt = aitools.generateMovementsPrompt(bAI.board, parsedData.possibleMoves, possibleSols);
+
+    if (!possibleSols) {
+        console.log("No hay movimientos IA");
+        return 259;
+    }
+
+    let movesPrompt = aitools.generateMovementsPrompt(bAI.board, parsedData.possibleMoves, possibleSols, req.session.game.consumedDisadvantages);
+    let chain = getChain(req);
     const response = await chain.invoke({
         input: movesPrompt,
     });
     let iachoose = Array.from(response.content)[0];
+    console.log(response.content, iachoose);
     let aiMove = null;
     try {
-        aiMove = utils.transformPathToMoves(possibleSols[Number(iachoose)-1]);
+        aiMove = utils.transformPathToMoves(possibleSols[Number(iachoose)]);
     } catch (error) {
         ; // NOP
     }
-    
+
     let playerMove1 = utils.findSolutions(b.board, b.possibleMoves, 15);
     if (!playerMove1) {
-        //Aqui hay que meter comunicacion con frontend para acabar la partida
         console.log("No hay movimientos Player");
-        return;
+        return 258;
     }
     
     let aiJsonMove = {"nodes": aiMove};
@@ -159,7 +174,7 @@ router.post('/disadvantage', async (req, res) => {
                 "iascore": req.session.iascore,
             };
 
-            // guardarnos la putada
+            // guardarnos la desventaja
             req.session.game.iaPathGeneration = 5;
             req.session.game.consumedDisadvantages.push(1);
             res.send(resjson);
@@ -177,29 +192,8 @@ router.post('/disadvantage', async (req, res) => {
                 "iascore": req.session.iascore,
             };
 
-            // guardarnos la putada
-            req.session.consumedDisadvantages.push(2);
-
-
-
-
-
-
-            // IMPLEMENTAR LA PUTADA // TODO
-            // MARTIN AQUI VA EL CODIGO
-            // TAMBIEN HAY QUE METERLO EN EL LOAD.js
-
-
-
-
-
-
-
-
-
-
-
-
+            // guardarnos la desventaja
+            req.session.game.consumedDisadvantages.push(2);
 
             res.send(resjson);
             break;
@@ -216,22 +210,8 @@ router.post('/disadvantage', async (req, res) => {
                 "iascore": req.session.iascore,
             };
 
-            // guardarnos la putada
-            req.session.consumedDisadvantages.push(3);
-
-
-
-
-
-
-            // IMPLEMENTAR LA PUTADA // TODO
-            // MARTIN AQUI VA EL CODIGO
-            // TAMBIEN HAY QUE METERLO EN EL LOAD.js
-
-
-
-
-
+            // guardarnos la desventaja
+            req.session.game.consumedDisadvantages.push(3);
 
             res.send(resjson);
             break;
@@ -245,6 +225,12 @@ router.get('/', (req, res) => {
     res.send("200 AI BACKEND OK");
 });
 
+function getChain(req) {
+    if (req.session.game.consumedDisadvantages.includes(3)) {
+        return prompt.pipe(model2);
+    }
+    return prompt.pipe(model);
+}
 
 
 module.exports = router;

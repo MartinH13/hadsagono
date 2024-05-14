@@ -17,6 +17,8 @@ Especifico movimientos:
 255 = Los movimientos tienen que ser de mínimo 3 hexágonos
 256 = Se ha intentado hacer un movimiento ilegal (nodos no conectados)
 257 = Movimiento ilegal (se están conectando dos números distintos)
+258 = No quedan más movimientos para el jugador
+259 = No quedan más movimientos para ela IA
 
 Errores de dataAccess:
 ------
