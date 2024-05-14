@@ -7,7 +7,6 @@ let utils = require('../logic/utils.js');
 
 router.post('/:code', async (req, res) => {
     let code = req.params.code;
-    console.log("Loading game with code: " + code);
     let game = await db.load(code);
     // if game is an integer, error code is returned
     if (typeof game === 'number') {

@@ -93,7 +93,6 @@ router.post('/move', async (req, res) => {
     let possibleSols = utils.chooseNSolutions(bAI.board, parsedData.possibleMoves, parsedData.iaPathGeneration)
 
     if (!possibleSols) {
-        console.log("No hay movimientos IA");
         res.send({"error": 259});
         return;
     }
@@ -104,7 +103,6 @@ router.post('/move', async (req, res) => {
         input: movesPrompt,
     });
     let iachoose = Array.from(response.content)[0];
-    console.log(response.content, iachoose);
     let aiMove = null;
     try {
         aiMove = utils.transformPathToMoves(possibleSols[Number(iachoose)]);
@@ -114,7 +112,6 @@ router.post('/move', async (req, res) => {
 
     let playerMove1 = utils.findSolutions(b.board, b.possibleMoves, 3);
     if (!playerMove1) {
-        console.log("No hay movimientos Player");
         res.send({"error": 258});
         return;
     }

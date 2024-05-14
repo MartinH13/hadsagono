@@ -4,7 +4,15 @@ A kids' game about connecting hexagons. Built using React, Vite, Express, Mongod
 
 ## Demo
 
-An instance of the application is hosted at https://hads.nico.eus . Only games with more than 3 movements are saved on the server.
+An instance of the application is hosted at https://hads.nico.eus . Only games with more than 3 movements are saved on the server. Games older than 3 months will be automatically deleted.
+
+## Screenshot
+
+![Singleplayer mode screenshot](https://i.imgur.com/lMDhwbl.png)
+_Figure: Singleplayer mode, a fresh started game_
+
+![Multiplayer mode screenshot](https://i.imgur.com/89JXs8I.png)
+_Figure: Multiplayer mode_
 
 ## Self-Hosting
 

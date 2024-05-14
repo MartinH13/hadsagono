@@ -46,7 +46,6 @@ router.post('/move', async (req, res) => {
 
     let playerMove1 = utils.findSolutions(b.board, b.possibleMoves, 3);
     if (!playerMove1) {
-        console.log("No hay movimientos Player");
         res.send({"error": 258});
         return;
     }

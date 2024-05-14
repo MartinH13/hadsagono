@@ -139,7 +139,6 @@ const Board = () => {
     } else {
       await loadGame(inputValue);
       if (inputError == false) {
-        console.log("no hay error");
         setInputNull(false);
         setShowPopup(false);
 
@@ -162,7 +161,6 @@ const Board = () => {
       credentials: "include",
     });
     const data = await response.json();
-    console.log("CODIGO", data.code);
     setGameCode(undefined);
     setGameState({
       loaded: true,
@@ -174,7 +172,6 @@ const Board = () => {
 
   const loadGame = async (gameCode) => {
 
-    console.log("GameCode", gameCode);
     const response = await fetch(backEndUrl + `/load/${gameCode}`, {
       method: 'POST',
       credentials: "include",
@@ -184,7 +181,6 @@ const Board = () => {
       body: JSON.stringify({ code: gameCode })
     });
     const data = await response.json();
-    console.log("DATA", data);
     if (data.error !== 281 && data.error !== 282) {
       if (data.iaboard === undefined) {
         setWithIA(false);
@@ -237,7 +233,6 @@ const Board = () => {
       });
     } else {
       if(data.error === 258){
-        console.log("error");
         showModaEndGame();
       }else{
       setTimeout(() => setApplyStyle(true), 100);
@@ -457,7 +452,6 @@ const Board = () => {
       });
       const resultArray = [coordArray[0], ...subtractionArray];
       if (withIA) {
-        console.log("With IA");
         postMovesIA(resultArray);
       } else {
         postMoves(resultArray);
@@ -544,7 +538,7 @@ const Board = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                   <div id="myModal" className="modal">
                     <div className="modal-content">
-                      <p>Waiting the AI to answer...</p>
+                      <p>Waiting for the AI to answer...</p>
                       <div className="loader"></div>
                     </div>
                   </div>

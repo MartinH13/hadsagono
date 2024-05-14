@@ -108,7 +108,6 @@ class DataAccess {
       const data = await response.json();
       const returnedCode = await this.codeExists(data[0]);
       if (returnedCode!=0) {
-        console.log ("Code exists. Generating new code...");
         return DataAccess.generateCode();
       }
       return data[0];
@@ -124,7 +123,6 @@ class DataAccess {
       const existsBoard = await Board.exists({ code: code });
       const existsBoardAI = await BoardAI.exists({ code: code });
       if (existsBoard && existsBoardAI) {
-        console.log("Error: Both board and boardAI found. Purging...");
         DataAccess.purgeCode(code);
         return 10;
       } else if (existsBoard) {
@@ -141,20 +139,20 @@ class DataAccess {
     }
   }
 
-  //Cleanup function. Deletes documents older than 1 month or if there's less than 3 moves
+  //Cleanup function. Deletes documents older than 3 months or if there's less than 3 moves
   static async cleanup() {
     try {
-      const oneMonthsAgo = moment().subtract(3, 'months').toDate();
+      const threeMonthsAgo = moment().subtract(3, 'months').toDate();
 
       let result = await Board.deleteMany({
         $or: [
-          { date: { $lt: oneMonthsAgo  } },
+          { date: { $lt: threeMonthsAgo  } },
           { movecount: { $lt: 3 } }
         ]
       });
       result = await BoardAI.deleteMany({
         $or: [
-          { date: { $lt: oneMonthsAgo  } },
+          { date: { $lt: threeMonthsAgo  } },
           { movecount: { $lt: 3 } }
         ]
       });
@@ -168,7 +166,6 @@ class DataAccess {
     try {
       const result = await Board.find();
       await BackupBoard.insertMany(result);
-      console.log('Backup done');
     } catch (error) {
       console.error('Error:', error);
     }
@@ -181,7 +178,6 @@ class DataAccess {
       if (overwrite)
         await Board.deleteMany();
       await Board.insertMany(result);
-      console.log('Restore done');
     } catch (error) {
       console.error('Error:', error);
     }
@@ -191,17 +187,6 @@ class DataAccess {
     try {
       await Board.deleteMany({ code: code});
       await BoardAI.deleteMany({ code: code});
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }
-
-  //Do not call this function in production
-  static async deleteAll() {
-    try {
-      await Board.deleteMany();
-      await BoardAI.deleteMany();
-      console.log('Deleted all documents');
     } catch (error) {
       console.error('Error:', error);
     }

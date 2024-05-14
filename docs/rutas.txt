@@ -1,5 +1,0 @@
-Rutas de backend:
-
-GET /single/new : Crea un nuevo juego singleplayer, devuelve el primer json dentro de JSONformato con todo (board, score, possiblemoves, code)
-GET /single/load/XXXX : devuelve el primer json dentro de JSONformato con todo (board, score, possiblemoves, code) correspondiente al codigo pasado como XXXX. Si no, se devolverá {"error": codigo}
-POST /single/move : Hay que pasar un json de tipo "moves". Si hay algo mal, devuelve {"error": codigo}. Si va todo bien devuelve el (board, score)
