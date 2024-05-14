@@ -291,10 +291,8 @@ const Board = () => {
       code: data.code,
       iaResult: null
     });
-
-
+    SnackBar.show({text: "Welcome, mortal. Prepare for your inevitable defeat by my superior algorithms. Let the game begin!", pos: 'bottom-center', actionText: 'OK', actionTextColor: '#fff', backgroundColor: '#333', duration: 5000});
   };
-
 
   const getHexagonColor = (value) => {
     const colors = [
