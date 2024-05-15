@@ -16,10 +16,10 @@ services:
       - internal
 
   database:
-    image: mongo:7
+    image: mongo:4.4.29
     volumes:
       - ./mongodata:/data/db
-      - ./db/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+      - ./db/init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh
     ports:
       - "27017:27017"
     environment:
