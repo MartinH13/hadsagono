@@ -47,7 +47,8 @@ class Utils {
         // Iterate over each number in the filtered matrix
         filteredMatrix.forEach(num => {
             // Add the number to the frequency array as many times as it appears
-            for (let i = 0; i < num; i++) {
+            let times = filteredMatrix.filter(n => n === num).length;
+            for (let i = 0; i < times; i++) {
                 frequencyArray.push(num);
             }
         });
@@ -63,6 +64,7 @@ class Utils {
         
 
         // Select a random index from the frequency array
+        console.log("selectrandomindex")
         const randomIndex = Math.floor(Math.random() * frequencyArray.length);
 
         // Return the number at the randomly selected index
