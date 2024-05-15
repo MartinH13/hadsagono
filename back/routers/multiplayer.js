@@ -99,8 +99,9 @@ router.post('/move', async (req, res) => {
 
     let movesPrompt = aitools.generateMovementsPrompt(bAI.board, parsedData.possibleMoves, possibleSols, req.session.game.consumedDisadvantages);
     let chain = getChain(req);
+    let response;
     try {
-        const response = await chain.invoke({
+         response = await chain.invoke({
             input: movesPrompt,
         });
     } catch (error) {
