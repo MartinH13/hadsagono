@@ -64,7 +64,6 @@ class Utils {
         
 
         // Select a random index from the frequency array
-        console.log("selectrandomindex")
         const randomIndex = Math.floor(Math.random() * frequencyArray.length);
 
         // Return the number at the randomly selected index
