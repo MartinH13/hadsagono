@@ -672,6 +672,9 @@ const Board = () => {
                             backgroundColor: getHexagonColor(value),
                             '--hexagon-color': getHexagonColor(value)
                           }}
+                          onTouchStart={() => handleMouseDown(rowIndex, colIndex)}
+                          onTouchMove={() => handleMouseEnter( rowIndex, colIndex)}
+                          onTouchEnd={handleMouseUp}
                           onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
                           onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
                           onMouseUp={handleMouseUp}
