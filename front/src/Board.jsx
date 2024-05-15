@@ -81,7 +81,7 @@ const Board = () => {
         event.target.remove(event.target.selectedIndex);
       } 
     } catch (error) {
-      console.log("An error occurred trying to apply de disadvantage", error);
+      console.log("An error occurred trying to apply the disadvantage", error);
     }
     
   };
@@ -272,6 +272,8 @@ const Board = () => {
     } else {
       if(data.error === 259 || data.error === 258){
         showModaEndGame();
+      }else if(data.error === 310){
+        SnackBar.show({text: "Apologies, I'm currently tied up with other tasks. Try again in a minute!", pos: 'bottom-center', actionText: 'OK', actionTextColor: '#fff', backgroundColor: '#333', duration: 5000});
       }else{
       setTimeout(() => setApplyStyle(true), 100);
       setTimeout(() => setApplyStyle(false), 700);
