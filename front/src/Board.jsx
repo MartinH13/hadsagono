@@ -324,7 +324,8 @@ const Board = () => {
 
   const formatValue = (value) => {
     if (value >= 1000000) {
-      return '1M';
+      const abbreviatedValue = Math.floor(value / 1000000); // Redondear hacia abajo para obtener el valor abreviado
+    return `${abbreviatedValue}M`;
     } else if (value >= 1000) {
       const abbreviatedValue = Math.floor(value / 1000); // Redondear hacia abajo para obtener el valor abreviado
       return `${abbreviatedValue}K`;
