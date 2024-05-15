@@ -33,6 +33,7 @@ const boardAISchema = new Schema({
 const Board = mongoose.model('Board', boardSchema);
 const BoardAI = mongoose.model('BoardAI', boardAISchema);
 const BackupBoard = mongoose.model('BackupBoard', boardSchema);
+const BackupBoardAI = mongoose.model('BackupBoard', boardSchema);
 
 class DataAccess {
 
