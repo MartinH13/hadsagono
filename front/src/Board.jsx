@@ -475,12 +475,155 @@ const Board = () => {
       default:
         return "AI FOUND PROBLEMS...";
     }
+  };
+
+  //Cosas necesarias para el movil
+  const handleTouchMove = (event) => {
+    if (isMouseDown) {
+      const touch = event.touches[0];
+      const hexagonElement = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (hexagonElement && hexagonElement.classList.contains('hexagon')) {
+        const rowIndex = parseInt(hexagonElement.getAttribute('data-row'));
+        const colIndex = parseInt(hexagonElement.getAttribute('data-col'));
+        const hexagon = gameState.boardData[rowIndex][colIndex];
+        if (hexagon !== -1) {
+          setSelectedHexagons(prevSelectedHexagons => {
+            const currentIndex = prevSelectedHexagons.findIndex(
+              hexagon => hexagon.row === rowIndex && hexagon.col === colIndex
+            );
+            if (currentIndex !== -1) {
+              // Remove the last hexagon from the list
+              return prevSelectedHexagons.slice(0, currentIndex + 1);
+            } else {
+              // Check if there are any previously selected hexagons
+              if (prevSelectedHexagons.length > 0) {
+                // Check if it's a valid move from the last selected hexagon
+                const lastSelectedHexagon = prevSelectedHexagons[prevSelectedHexagons.length - 1];
+                const isValidMove =
+                  Math.abs(lastSelectedHexagon.row - rowIndex) <= 1 &&
+                  Math.abs(lastSelectedHexagon.col - colIndex) <= 1;
+                
+                if (isValidMove) {
+                  // Check if the current hexagon has the same value as the first selected hexagon
+                  if (prevSelectedHexagons[0].value === hexagon) {
+                    return [
+                      ...prevSelectedHexagons,
+                      { row: rowIndex, col: colIndex, value: hexagon, selected: true }
+                    ];
+                  }
+                  // If the current hexagon doesn't have the same value as the first selected hexagon, don't add it to the list
+                  else {
+                    setTimeout(() => setApplyStyle(true), 100);
+                    setTimeout(() => setApplyStyle(false), 700);
+                    setSelectedHexagons([]);
+                    return prevSelectedHexagons;
+                  }
+                }
+              }
+            }
+            return prevSelectedHexagons;
+          });
+        }
+      }
+    }
+  };
+  const handleTouchStart = (event, rowIndex, colIndex) => {
+    const hexagon = gameState.boardData[rowIndex][colIndex];
+    if (hexagon !== -1 && !selectedHexagons.some(hexagon => hexagon.row === rowIndex && hexagon.col === colIndex)) {
+      setApplyStyle(false);
+      setSelectedHexagons([{ row: rowIndex, col: colIndex, value: hexagon, selected: true }]);
+      setIsMouseDown(true);
+    }
+  };
+  
+  const handleTouchEnd = (event) => {
+    event.preventDefault();
+    if (selectedHexagons.length < 3) {
+      setTimeout(() => setApplyStyle(true), 100);
+      setTimeout(() => setApplyStyle(false), 4000);
+    } else {
+      const coordArray = selectedHexagons.map(obj => [obj.row, obj.col]);
+      const subtractionArray = coordArray.slice(0, -1).map(([x1, y1], index) => {
+        const [x2, y2] = coordArray[index + 1];
+        return [x2 - x1, y2 - y1];
+      });
+      const resultArray = [coordArray[0], ...subtractionArray];
+      if (withIA) {
+        postMovesIA(resultArray);
+      } else {
+        postMoves(resultArray);
+      }
+    }
+    setIsMouseDown(false);
+    setSelectedHexagons([]);
+  };
+
+  
+//PARA LA IA CON EL MOVIL
+const handleTouchStartIA = (event, rowIndex, colIndex) => {
+  const hexagon = gameIA.boardData[rowIndex][colIndex];
+  if (hexagon !== -1 && !selectedHexagons.some(hexagon => hexagon.row === rowIndex && hexagon.col === colIndex)) {
+    setApplyStyle(false);
+    setSelectedHexagons([{ row: rowIndex, col: colIndex, value: hexagon, selected: true }]);
+    setIsMouseDown(true);
   }
+};
+
+const handleTouchMoveIA = (event) => {
+
+  if (isMouseDown) {
+    const touch = event.touches[0];
+    const hexagonElement = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (hexagonElement && hexagonElement.classList.contains('hexagon')) {
+      const rowIndex = parseInt(hexagonElement.getAttribute('data-row'));
+      const colIndex = parseInt(hexagonElement.getAttribute('data-col'));
+      const hexagon = gameIA.boardData[rowIndex][colIndex];
+      if (hexagon !== -1) {
+        setSelectedHexagons(prevSelectedHexagons => {
+          const currentIndex = prevSelectedHexagons.findIndex(
+            hexagon => hexagon.row === rowIndex && hexagon.col === colIndex
+          );
+          if (currentIndex !== -1) {
+            // Remove the last hexagon from the list
+            return prevSelectedHexagons.slice(0, currentIndex + 1);
+          } else {
+            // Check if there are any previously selected hexagons
+            if (prevSelectedHexagons.length > 0) {
+              // Check if it's a valid move from the last selected hexagon
+              const lastSelectedHexagon = prevSelectedHexagons[prevSelectedHexagons.length - 1];
+              const isValidMove =
+                Math.abs(lastSelectedHexagon.row - rowIndex) <= 1 &&
+                Math.abs(lastSelectedHexagon.col - colIndex) <= 1;
+              
+              if (isValidMove) {
+                // Check if the current hexagon has the same value as the first selected hexagon
+                if (prevSelectedHexagons[0].value === hexagon) {
+                  return [
+                    ...prevSelectedHexagons,
+                    { row: rowIndex, col: colIndex, value: hexagon, selected: true }
+                  ];
+                }
+                // If the current hexagon doesn't have the same value as the first selected hexagon, don't add it to the list
+                else {
+                  setTimeout(() => setApplyStyle(true), 100);
+                  setTimeout(() => setApplyStyle(false), 700);
+                  setSelectedHexagons([]);
+                  return prevSelectedHexagons;
+                }
+              }
+            }
+          }
+          return prevSelectedHexagons;
+        });
+      }
+    }
+  }
+};
 
   return showPopup ? (
     <>
       <div className="popup">
-        <h1 className='title' >HADSAGONO</h1>
+        <h1 className='title' style={{ marginBottom: "20px" }}  >HADSAGONO</h1>
 
         {showInput ? (
           <>
@@ -538,7 +681,7 @@ const Board = () => {
             {gameIA.loaded ? (
               <>
                 <h3 style={{ textAlign: 'center', marginBottom: '-30px ', height: '30px'}}>{typeof gameCode !== 'undefined' && <span> GAME CODE: {gameCode}</span>}</h3>
-                <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                <div className="wrapperIA" style={{ display: 'flex', justifyContent: 'space-around' }}>
                   <div id="myModal" className="modal">
                     <div className="modal-content">
                       <p>Waiting for the AI to answer...</p>
@@ -570,8 +713,20 @@ const Board = () => {
                                 } ${selectedHexagons.some(hexagon => hexagon.row === rowIndex && hexagon.col === colIndex) ? 'selected' : ''}`}
                               style={{
                                 backgroundColor: getHexagonColor(value),
-                                '--hexagon-color': getHexagonColor(value)
+                                '--hexagon-color': getHexagonColor(value),
+                                touchAction: 'none',
+                                WebkitTouchCallout: 'none',
+                                WebkitUserSelect: 'none',
+                                KhtmlUserSelect: 'none',
+                                MozUserSelect: 'none',
+                                msUserSelect: 'none',
+                                userSelect: 'none',
                               }}
+                              onTouchStartCapture={(event) => handleTouchStartIA(event, rowIndex, colIndex)}
+                              onTouchMoveCapture={(event) => handleTouchMoveIA(event)}
+                              onTouchEndCapture={handleTouchEnd}
+                              data-row={rowIndex}
+                              data-col={colIndex}
                               onMouseDown={() => handleMouseDownIA(rowIndex, colIndex)}
                               onMouseEnter={() => handleMouseEnterIA(rowIndex, colIndex)}
                               onMouseUp={handleMouseUp}
@@ -637,7 +792,7 @@ const Board = () => {
             ) : (
               
               <div>
-                <p>Loading game with AI...</p>
+                <p className='loading'>Loading game with AI...</p>
               </div>
             )}
 
@@ -670,11 +825,21 @@ const Board = () => {
                             } ${selectedHexagons.some(hexagon => hexagon.row === rowIndex && hexagon.col === colIndex) ? 'selected' : ''}`}
                           style={{
                             backgroundColor: getHexagonColor(value),
-                            '--hexagon-color': getHexagonColor(value)
+                            '--hexagon-color': getHexagonColor(value),
+                            touchAction: 'none',
+                            WebkitTouchCallout: 'none',
+                            WebkitUserSelect: 'none',
+                            KhtmlUserSelect: 'none',
+                            MozUserSelect: 'none',
+                            msUserSelect: 'none',
+                            userSelect: 'none',
                           }}
-                          onTouchStart={() => handleMouseDown(rowIndex, colIndex)}
-                          onTouchMove={() => handleMouseEnter( rowIndex, colIndex)}
-                          onTouchEnd={handleMouseUp}
+                          onTouchStartCapture={(event) => handleTouchStart(event, rowIndex, colIndex)}
+                          onTouchMoveCapture={(event) => handleTouchMove(event)}
+                          onTouchEndCapture={handleTouchEnd}
+                          data-row={rowIndex}
+                          data-col={colIndex}
+                          
                           onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
                           onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
                           onMouseUp={handleMouseUp}
@@ -689,7 +854,7 @@ const Board = () => {
               </>
 
             ) : (
-              <div>Loading singleplayer...</div>
+              <div><p className='loading'>Loading singleplayer...</p></div>
             )}
           </>
         )}
