@@ -2,6 +2,8 @@
 
 A kids' game about connecting hexagons. Built using React, Vite, Express, Mongodb, Langchain and Node.js.
 
+The entirety of the application was developed for the "Advanced Techniques for Software Development" subject in the third year of the "Computer Engineering" university degree. It contains some very good code, some mediocre code and bunch of horrible, spaguetti code. I'm publishing it here for the sake of posterity.
+
 ## Demo
 
 An instance of the application is hosted at https://hads.nico.eus . Only games with more than 3 movements are saved on the server. Games older than 3 months will be automatically deleted.
