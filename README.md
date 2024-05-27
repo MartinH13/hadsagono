@@ -2,7 +2,7 @@
 
 A kids' game about connecting hexagons. Built using React, Vite, Express, Mongodb, Langchain and Node.js.
 
-The entirety of the application was developed for the "Advanced Techniques for Software Development" subject in the third year of the "Computer Engineering" university degree. It contains some very good code, some mediocre code and bunch of horrible, spaguetti code. I'm publishing it here for the sake of posterity.
+The entirety of the application was developed for the "Advanced Techniques for Software Development" subject in the third year of the "Computer Engineering" university degree. It contains some very good code, some mediocre code and bunch of horrible, spaguetti code. We're publishing it here for the sake of posterity.
 
 ## Demo
 
@@ -111,6 +111,10 @@ npm install -save
 
 You can use whatever IDE you want to develop the project, as the application itself does not need any fancy IDEs. Nevertheless, the development team recomends using [vscode](https://code.visualstudio.com/).
 We have published our recommended extensions for vscode for working in the proyect in an [extension pack](https://marketplace.visualstudio.com/items?itemName=nicoagr.hadsagono-vscodeextensions) for your convenience.
+
+## Extra Information
+
+A technical report with all the characteristics of the project can be found in the _technical_report_ file in the source code root. 
 
 ## Legal
 
