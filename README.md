@@ -90,7 +90,7 @@ npm install -save
 ```
 - The source files of the React frontend are found in the _front/src_ folder.
 
-- To run the development server, you'll need to enter in the terminal
+- To run the development server (it will start, by default in the port 5173), you'll need to enter in the terminal
 ```
 npm run dev
 ```
@@ -106,6 +106,11 @@ npm install -save
 - Then, rename the ".env.example" file to ".env".
 - You'll want to get yourself an API Key from the LLM Provider [Groq](https://console.groq.com) and you should insert it in the .env file.
 - The application also needs a mongodb database to save the games on. The db MUST have a created database named "hadsagono". The application will create itself three collections: "boards", "boardais" and "backupboards" so make sure there aren't any naming collisions. You must provide a mongo connection URI in the .env file. If you haven't got a mongodb instance, you can [self-host](https://www.mongodb.com/try/download/community) one in your local machine.
+
+- Finally, to run the backend development server (it will start, by default in the port 3642), you'll need to enter in the terminal
+```
+npm run start
+```
 
 ### Recommended IDE
 

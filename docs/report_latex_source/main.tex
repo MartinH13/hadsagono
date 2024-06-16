@@ -1,0 +1,925 @@
+\documentclass[12pt,epsf,titlepage,a4paper]{article}
+
+\usepackage{amsmath, amssymb, latexsym, tcolorbox}
+\usepackage{epsf, graphics, graphicx, xcolor, listings}
+\usepackage{amsfonts,stmaryrd,amssymb}
+\usepackage[framemethod=tikz]{mdframed}
+\usepackage{titlesec}
+\usepackage{psfrag}
+\usepackage{tocloft}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+% Metadatos del archivo pdf
+\hypersetup{pdfauthor={Nicolás Aguado, Asier Contreras, Martín
+            Horsfield},
+            pdftitle={HADSagono - Memoria Técnica},
+            pdfsubject={Herramientas Avanzadas de Desarrollo de Sosftware},
+            pdfkeywords={UPV/EHU - 2024},
+            pdfproducer={},
+            pdfcreator={}
+            }
+
+\definecolor{javared}{rgb}{0.6,0,0} % for strings
+\definecolor{javagreen}{rgb}{0.25,0.5,0.35} % comments
+\definecolor{javapurple}{rgb}{0.5,0,0.35} % keywords
+\definecolor{javadocblue}{rgb}{0.25,0.35,0.75} % javadoc
+ 
+
+%----------------------------------------------------------------------------------------
+%	FILE CONTENTS ENVIRONMENT
+%----------------------------------------------------------------------------------------
+
+% Usage:
+% \begin{file}[optional filename, defaults to "File"]
+%	File contents, for example, with a listings environment
+% \end{file}
+
+\mdfdefinestyle{file}{
+	innertopmargin=1.6\baselineskip,
+	innerbottommargin=0.8\baselineskip,
+	topline=false, bottomline=false,
+	leftline=false, rightline=false,
+	leftmargin=2cm,
+	rightmargin=2cm,
+	singleextra={%
+		\draw[fill=black!10!white](P)++(0,-1.2em)rectangle(P-|O);
+		\node[anchor=north west]
+		at(P-|O){\ttfamily\mdfilename};
+		%
+		\def\l{3em}
+		\draw(O-|P)++(-\l,0)--++(\l,\l)--(P)--(P-|O)--(O)--cycle;
+		\draw(O-|P)++(-\l,0)--++(0,\l)--++(\l,0);
+	},
+	nobreak,
+}
+
+% Define a custom environment for file contents
+\newenvironment{file}[1][File]{ % Set the default filename to "File"
+	\medskip
+	\newcommand{\mdfilename}{#1}
+	\begin{mdframed}[style=file]
+}{
+	\end{mdframed}
+	\medskip
+}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+% display heading, like subsubsection
+                                     {-3.25ex\@plus -1ex \@minus -.2ex}%
+                                     {1.5ex \@plus .2ex}%
+                                     {\normalfont\normalsize\bfseries}}
+\setcounter{secnumdepth}{5}
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
+\lstdefinelanguage{HTML5}{
+  language=html,
+  sensitive=true,	
+  alsoletter={<>=-},	
+  morecomment=[s]{<!-}{-->},
+  tag=[s],
+  otherkeywords={
+  % General
+  >,
+  % Standard tags
+	<!DOCTYPE,
+  </html, <html, <head, <title, </title, <style, </style, <link, </head, <meta, />,
+	% body
+	</body, <body,
+	% Divs
+	</div, <div, </div>, 
+	% Paragraphs
+	</p, <p, </p>,
+	% scripts
+	</script, <script,
+  % More tags...
+  <canvas, /canvas>, <svg, <rect, <animateTransform, </rect>, </svg>, <video, <source, <iframe, </iframe>, </video>, <image, </image>, <header, </header, <article, </article
+  },
+  ndkeywords={
+  % General
+  =,
+  % HTML attributes
+  charset=, src=, id=, width=, height=, style=, type=, rel=, href=,
+  % SVG attributes
+  fill=, attributeName=, begin=, dur=, from=, to=, poster=, controls=, x=, y=, repeatCount=, xlink:href=,
+  % properties
+  margin:, padding:, background-image:, border:, top:, left:, position:, width:, height:, margin-top:, margin-bottom:, font-size:, line-height:,
+	% CSS3 properties
+  transform:, -moz-transform:, -webkit-transform:,
+  animation:, -webkit-animation:,
+  transition:,  transition-duration:, transition-property:, transition-timing-function:,
+  }
+}
+
+
+
+% Your document starts here!
+\begin{document}
+
+
+
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\center % Center everything on the page
+ 
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+\textsc{ Universidad del País Vasco}\\[0.4cm] % Name of your university/college   
+%\textsc{\Large (Roll no: 11555)}\\[0.5cm] % Major heading such as course name
+\begin{figure}[h]
+
+\centerline{\includegraphics[scale=0.15]{img/ehu.jpg}}
+\label{logoEHU}
+\end{figure}
+\vspace{1cm}
+\textsc{\large Herramientas Avanzadas de Desarrollo de Software}\\[0.5cm] % Minor heading such as course title
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\HRule \\[0.8cm]
+{ \huge \bfseries Memoria Técnica}\\[0.6cm] % Title of your document
+{ \large \bfseries HADSagono}\\[0.3cm]
+\HRule \\[1.5cm]
+ 
+%----------------------------------------------------------------------------------------
+%	AUTHOR SECTIONcoros
+%----------------------------------------------------------------------------------------
+
+\begin{minipage}{0.8\textwidth}
+\begin{center} 
+\large \emph{Nicolás Aguado, Asier Contreras y Martín Horsfield} \\[0.8cm]
+\hspace{2cm}
+\end{center}
+
+\end{minipage}
+
+
+
+\begin{figure}[h]
+\centerline{\includegraphics[scale=0.15]{img/hexa.png}}
+\label{logo}
+\end{figure}
+
+\begin{center}
+\hspace{3cm}
+
+\today
+\end{center}
+
+\end{titlepage}
+
+\pagebreak
+
+\tableofcontents
+\vfill{}
+
+\pagebreak
+
+\section{Resumen}
+
+El proyecto consiste en el desarrollo de un juego rompecabezas basado en hexágonos donde hay que juntar un mínimo de 3 hexágonos del mismo valor para fusionarlos en uno. Se puede jugar tanto una partida individual o una partida contra una IA. Mientras juegas la partida, una inteligencia artificial juega simultáneamente en un tablero inicial idéntico para determinar quién es mejor, si el humano o la IA. El juego finaliza cuando uno de los dos jugadores realiza un movimiento y en el nuevo tablero no hay movimientos legales posibles.
+
+El frontend se ha desarrollado utilizando React y Vite, creando una interfaz de usuario interactiva y atractiva. Por otro lado, el backend se ha implementado con Node.js, creando una API que permite la comunicación entre el cliente y el servidor. Para el modo contra la IA, se han analizado los distintos modelos disponibles (a fecha de implementación de la aplicación) y se ha optado por un juego semi-\emph{guiado}, en el que los modelos actuales no son todavía lo suficientemente capaces como para elaborar un razonamiento capaz. Entonces, se ofrecen alternativas y se le dan vías al modelo LLM para elegirlas.
+
+Además, el juego tendrá un sistema de autoguardado de partida, que se almacena en una base de datos de MongoDB. No es necesario registrarse por lo que para almacenar las partidas el sistema se encargará de crear un código de partida único, tanto para las partidas individuales como para las partidas contra la IA. Mediante ese código, el usuario podrá cargar la partida y seguir con ella siempre que quiera.
+
+Finalmente, el proyecto se ha dockerizado para facilitar su despliegue y ejecución en diferentes entornos (sin generar fallos, independientemente de la arquitectura), garantizando la portabilidad y consistencia del mismo.
+
+\pagebreak
+\section{Introducción y objetivos}
+\subsection{Introducción}
+
+Este proyecto tiene como objetivo desarrollar un juego de rompecabezas \emph{multi-dispositivo} basado en la unión de hexágonos con números del mismo valor. El jugador deberá identificar y combinar los hexágonos adyacentes que contengan el mismo valor, lo que agrupará la ruta de números seleccionada en un único hexágono y generará nuevos números de forma aleatoria en el tablero. El desafío radica en lograr la mayor puntuación posible a través de la creación de rutas y combinaciones válidas. Además, también estará disponible un modo \emph{multijugador} en el cual se enfrentará al jugador frente a la inteligencia artificial en un desafío por ver quién consigue más puntos. En ambos casos, el juego terminará cuando el tablero no contenga movimientos posibles.
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.30]{img/single.png}
+  \caption{Modo un jugador del juego, en una partida recién empezada}
+  \label{fig:capturaaplicacion}
+\end{figure}
+\subsection{Objetivos}
+Entre la gran variadad de objetivos y requisitado que tiene este proyecto, los más destacables son los siguientes:
+\begin{enumerate}
+   
+    \item Implementar un tablero de juego utilizando una representación en formato JSON, donde cada posición estará ocupada por un hexágono con un número.
+    \item Permitir que el usuario pueda interactuar con el tablero, seleccionando y uniendo los hexágonos adyacentes del mismo valor.
+    \item Desarrollar un algoritmo que genere nuevos números de forma aleatoria en el tablero después de cada combinación exitosa.
+    \item Integrar un módulo de inteligencia artificial, utilizando la biblioteca LangChain, que permita al jugador enfrentarse a un oponente basado en Inteligencia Artificial.
+    \item Implementar una infraestructura escalable y portable utilizando Docker, facilitando así la ejecución y despliegue del proyecto en diferentes entornos.
+    \item Utilizar las tecnologías de desarrollo de software más actuales, como VS Code, Node.js y React, para garantizar un desarrollo eficiente y una experiencia de usuario óptima.    
+    
+\end{enumerate}
+
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.30]{img/multi.png}
+  \caption{Modo multijugador vs IA del juego}
+  \label{fig:capturaaplicacion}
+\end{figure}
+
+\pagebreak
+
+\section{Gestión del Proyecto}
+
+En cuanto a la gestión del proyecto de cara a la colaboración entre miembros del equipo, los plazos de realización de las tareas y la gestión de dependencias y comunicaciones se ha utilizado un \textbf{ciclo de vida ágil - iterativo}.
+Semana a semana, se han definido las tareas (escogidas de la lista común \ref{tareaslista}) a realizar para los miembros del equipo. El objetivo ha sido ir incorporando requisitos al proyecto, creando \emph{versiones} intermedias funcionales de la aplicación. Así, poco a poco añadiendo requisitos, la aplicación ha ido tomando forma y gracias a una buena gestión se han identificado las dependencias entre tareas y salvaguardado los posibles riesgos.
+
+\subsection{Alcance del Proyecto}
+El alcance inicial era desarrollar un juego donde los hexágonos del mismo valor se fusionaban al unirse, mientras una inteligencia artificial jugaba simultáneamente en un tablero idéntico para determinar quien era mejor, si el humano o la IA. Sin embargo, a medida que avanzaban las semanas y nos familiarizábamos más con la tecnología, incorporamos nuevas funcionalidades que ampliaron significativamente el alcance original además de más requisitos que el mismo profesor introdujo durante las clases.
+
+En cuanto al frontend, se ha desarrollado una interfaz de usuario interactiva y visualmente atractiva utilizando la biblioteca React y la implementación de Vite como herramienta de construcción. 
+
+El frontend no deberá de gestionar nada del sistema, solamente deberá de gestionar que mostrar en cada momento. Todas las tareas y funciones que hacen que el juego sea un juego y se pueda jugar se encargará el backend. Para ello, en el backend, se ha creado una API utilizando Node.js, que permite la comunicación entre el cliente y el servidor.
+
+El juego implementa un sistema de autoguardado de partida para el juego. Esto permite almacenar y recuperar los estados de las partidas en los modos individual y contra la IA. Además, se han desarrollado funcionalidades adicionales, como la eliminación automática de partidas antiguas o con pocas jugadas, y la capacidad de realizar backups y restauraciones de los datos.
+
+Un aspecto fundamental de este proyecto es la integración de la Inteligencia Artificial. Utilizando bibliotecas especializadas como LangChain o similares, se ha desarrollado un oponente basado en IA que puede jugar contra el usuario. Para aumentar la dificultad y proporcionar una experiencia más desafiante, se han ideado diferentes desventajas que el usuario puede aplicar a la IA durante la partida.
+
+Finalmente, una vez finalizado el proyecto, se ha dockerizado para facilitar su despliegue y ejecución en diferentes entornos sin generar fallos. Esto asegura la portabilidad y la consistencia del proyecto en distintos sistemas.
+
+En resumen, el alcance de este proyecto abarca el desarrollo de un juego de rompecabezas, la implementación de un backend robusto y escalable, la integración de un sistema de base de datos utilizando MongoDB, la incorporación de un oponente basado en Inteligencia Artificial y la dockerización del proyecto para facilitar su despliegue y ejecución.
+
+\subsection{Tareas del Proyecto} \label{tareaslista}
+
+De cara a poder desarrollar el trabajo en grupo, se han dividido las tareas para el desarrollo en paquetes de estimación temporal similar. Aquí se enumeran las más destacables sin ningún órden en particular.
+
+\begin{itemize}
+    \item Definición de estructura JSON común para comunicación entre cliente y servidor (jugadas, desventajas, movimientos, respuestas y tableros).
+    \item Definición de rutas en el backend, junto con parámetros de entrada y salida para comunicación con el cliente.
+    \item Lógica de negocio - Implementación de juego base mediante matrices con listas de movimientos posibles.
+    \item Lógica de negocio - Definición de prompts e implementación de librería langchain para comunicación con IA.
+    \item Lógica de negocio - Investigación sobre ahorro de tokens y optimización de recursos en la librería langchain. 
+    \item Implementación de capa de acceso a datos, basándose en instancia de mongodb y bajo el esquema común definido.
+    \item Investigación y aprendizaje básico de libería \emph{React}
+    \item FrontEnd - Definición y estilado de \emph{Tablero} básico, con coloreo de distintos números.
+    \item FrontEnd - Implementación de estilado y llamadas al backend para hacer jugadas. Recepción de información y actualización del tablero.
+    \item FrontEnd - Implementación de estilado y llamadas al backend para el modo contra la IA.
+    \item FrontEnd - Definición de menú, tratamiento de errores en llamadas al backend.
+    \item BackEnd - Implementación de desventajas según el esquema común.
+    \item FrontEnd - Implementación de estilado y llamadas al backend para las desventajas según el esquema común.
+    \item Deployment - Investigación de Dockerfiles y realización de empaquetado de aplicación.
+    \item Deployment - Investigación de docker compose y realización de empaquetado completo de aplicación. Variables de entorno y base de datos.
+    \item BackEnd - Condición de finalización de juego - Diseño e implementación de algoritmo para obtener jugadas posibles.
+\end{itemize}
+
+Una de las dificultades del proyecto ha radicado en identificar correctamente las dependencias entre tareas y la coordinación grupal mediante reuniones para poder producir un desarrollo constante en el proyecto.
+Además, se han repartido las tareas tal que si un miembro del equipo realizaba una tarea de la lista, éste era también el encargado de redactar su parte correspondiente en la memoria técnica (este documento).
+
+\section{Tecnologías}
+Como IDE se ha usado Visual Studio Code \cite{vscode} junto a Copilot \cite{vscopilot} para ayudar en la generación de código y para preguntar dudas y cuestiones relacionadas con el proyecto que hayan podido surgir. Además, como IA complementaria se ha usado el famoso asistente Claude \cite{claude} en su modelo más competitivo, Opus.
+
+Para almacenar las partidas y la gestión de las propias partidas guardadas hemos usado una base de datos de MongoDB \cite{mongowebpage} ya que es la más adecuada para trabajar con JSON. Gracias a usar una BD el juego permite almacenar y recuperar los estados de las partidas, tanto en el modo individual como en el modo de juego contra la IA.
+
+Como entorno de ejecución para el backend del proyecto se ha utilizado Node.js, junto a su gestor de paquetes por defecto npm \cite{npm}. Esta elección permite aprovechar las capacidades de JavaScript tanto en el frontend (con React \cite{react} $+$ Vite \cite{vite}) como en el backend (con Express \cite{express}), facilitando la integración entre ambas partes de la aplicación.
+
+\subsection{Lenguajes de Programación}
+
+\subsubsection{Lenguajes de Programación}
+Como lenguaje de programación principal para el proyecto se ha usado JavaScript. Con él, se han desarrollado toda la lógica del backend  utilizando Node.js, como la interfaz de usuario del frontend, mediante la biblioteca React.
+\subsubsection{Librerías}
+
+Frontend:
+\begin{itemize}
+    \item React: Es una biblioteca de JavaScript para la construcción de interfaces de usuario modernas y de forma más sencilla y rápida.
+    \item React Icons: Una librería que proporciona un conjunto de iconos para mejorar la interfaz gráfica.
+    \item Node Snackbar: Una biblioteca utilizada para mostrar notificaciones y mensajes de retroalimentación al usuario.
+    \item Vite: Es una herramienta de construcción que optimiza el desarrollo y el rendimiento del frontend que se usa de forma predeterminada con React.
+\end{itemize}
+
+Backend:
+
+\begin{itemize}
+    \item Node.js: Un entorno de ejecución de JavaScript que permite construir el backend de la aplicación.
+    \item Express: Framework que proporciona el servidor web y la estructura base del backend.
+    \item Mongoose: Una biblioteca que facilita la interacción con la base de datos MongoDB para la persistencia de datos.
+    \item Dotenv: Una librería que permite cargar variables de entorno, como la URL de conexión a MongoDB o el key de Groq.
+    \item Moment: Librería para trabajar con fechas y horas.
+    \item LangChain (ChatGroq, ChatPromptTemplate): Esta es una librería de LangChain, la biblioteca de inteligencia artificial utilizada en el proyecto. ChatGroq proporciona funcionalidades para la generación de respuestas de chat utilizando modelos de lenguaje. ChatPromtTemplate ha sido usado para definir y manipular plantillas de prompts de chat.
+
+
+\end{itemize}
+
+\subsection{Herramientas Software}
+
+Para este proyecto se han usado múltiples herramientas de software actuales, tanto herramientas que ya conociamos como algunas nuevas. 
+
+Al ser un proyecto colaborativo en el que más de una persona ha trabajado en el, debíamos de llevar un control de versiones adecuado. Para ello, se ha usado GitHub como plataforma de alojamiento de repositorios del proyecto para el control de versiones.
+
+Gracias al paquete de estudiantes gratuito que ofrece GitHub, también hemos usado Copilot tanto la ayuda en la generación automática de código como el chat interno que ofrece. Además, también hemos usado Claude como LLM adicional.
+
+Para el frontend, se ha usado Vite + React. Vite es un entorno de desarrollo rápido y ligero que permite crear aplicaciones web modernas con una configuración sencilla. Por otro lado, React es una biblioteca de JavaScript utilizada para construir interfaces de usuario interactivas y reactivas.
+
+Para el desarrollo de backend del servidor, se ha usado Node.js en la versión v18.18.0 junto a npm en la versión 9.8.1. Además, se ha usado Express.js para facilitar la creación de las APIs.
+
+Como base de datos se ha usado MongoDB en la versión 4.4.29 y Mongoose como biblioteca de modelado de objetos para interactuar con MongoDB. MongoDB es una base de datos NoSQL orientada a documentos, almacena los datos en BSON (Binary JSON) y en el juego trabajamos todo con JSONs por lo que es la herramienta de almacenamiento más adecuada para este proyecto. 
+
+Para el despliegue de la aplicación dentro de contenedores de software se ha usado Docker. Docker es una plataforma de contenerización que permite empaquetar una aplicación junto con todas sus dependencias en un contenedor aislado. Los contenedores de Docker proporcionan un entorno consistente y portátil para la ejecución de aplicaciones. Facilita la implementación y el despliegue de aplicaciones en diferentes entornos, como desarrollo, pruebas y producción. Además,  permite la escalabilidad y la gestión eficiente de aplicaciones al aislar los servicios en contenedores independientes.
+
+\subsubsection{Entornos de Desarrollo Integrado}
+Como se ha comentado previamente, para el desarrollo se ha usado Visual Studio Code \cite {vscode} junto a Github Copilot \cite{vscopilot} y Github Copilot Chat.
+
+\section{Implementación}
+
+\subsection{Frontend}
+El componente principal de la interfaz de usuario es \emph{Board.jsx}, que centraliza toda la lógica y la interacción del juego. Este componente utiliza el estado de React para manejar diversas variables, como la selección de hexágonos, el código del juego, el modo de juego y la interacción del usuario. Los métodos del componente, como handleMouseDown, handleMouseEnter y handleInputChange, actualizan el estado y, en algunos casos, realizan solicitudes al backend a través de funciones como \emph{postMoves} y \emph{postMovesIA}.
+
+La renderización de la interfaz de usuario se adapta dinámicamente al estado de la aplicación según el useState que esté en true en ese momento. Dependiendo de si se está mostrando el menú principal, si el usuario está jugando en modo individual o contra la IA, o si los datos del juego se han cargado correctamente, el componente Board se encarga de renderizar los elementos correspondientes.
+
+Además, la clase \emph{Board.jsx} se encarga de aplicar estilos y animaciones a los elementos de la interfaz, como los hexágonos y los botones. Esto se logra mediante el uso de un fichero CSS externo con el nombre \emph{Board.css} al que se le hace referencia y etiquetas de estilo internas en el propio \emph{Board.jsx}
+
+Por último, el frontend también se encarga de realizar comunicaciones con el backend a través de solicitudes HTTP utilizando fetch. Estas solicitudes se realizan a las rutas definidas en el servidor Node.js.
+
+\subsection{Lógica de Negocio - board.js}
+
+Para representar al juego en sí se ha decidido hacer uso de la orientación a objetos. Se ha creado la clase \emph{Board} y ésta contendrá todos los métodos necesarios para representar al tablero, hacer movimientos y efectuar comprobaciones.
+
+Lo primero a destacar es la manera de representación del juego. El tablero será un conjunto de hexágonos entre los que se podrá mover uno dependiendo por sus lados. Pero claro, hay que transformar esos hexágonos y movimientos en algo fácilmente manipulable y compatible con los lenguajes de programación. Se ha optado por la representación del tablero como una \textbf{matriz} de columnas impares y de filas pares con algunas casillas deshabilitadas de la última fila. Esta figura será fácilmente manipulable y escalable para todo tipo de algoritmos. Mediante unas sencillas reglas es posible generar los movimientos posibles de nodo a nodo (de casilla a casilla de la matriz) sea cual sea el tamaño de ésta. (Figura \ref{fig:bocetohexa}).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.17]{img/boceto.jpeg}
+  \caption{Boceto inicial de la representación de hexágonos como matriz.}
+  \label{fig:bocetohexa}
+\end{figure}
+
+
+Entonces, una vez se tiene la matriz de movimientos y los movimientos posibles entre casillas, se pueden representar unas \emph{acciones} mediante una \emph{casilla de salida} y las direcciones a recorrer, casilla por casilla. Por ejemplo, para empezar en la casilla \verb|[0,3]| y moverse abajo a la derecha y después abajo, se representaría con el json \verb|{"moves": [[0,3], [1, 1], [1, 0]]}|.
+
+Como ya se saben los movimientos posibles desde cada casilla, la verificación de si una \emph{acción} es válida o no se realiza de forma trivial. Después, se borran todas las casillas afectadas, se recalculan los nuevos valores y se actualiza la puntuación del jugador.
+
+
+\subsection{Base de Datos - MongoDB y dataAccess.js}
+
+\subsubsection{Diseño de la BD}
+
+La base de datos tiene varios esquemas. Vamos a describirlos a continuación:
+
+\begin{itemize}
+    \item \textbf{Board}: Es el esquema del juego. Almacena el \textit{tablero}, la \textit{puntuación}, el \textit{número de movimientos}, el \textit{código de identificación} y la \textit{fecha}. MongoDB añade otros datos como \texttt{\_id}.
+    \begin{lstlisting}[language=JavaScript]
+    const boardSchema = new Schema({
+    board: [],
+    score: Number,
+    movecount: Number,
+    code: String,
+    date: { type: Date, default: Date.now }
+    });
+    \end{lstlisting}
+
+    \item \textbf{BoardAI}: Es el esquema del juego en multijugador (con la IA). Almacena lo anterior y varios datos adicionales.
+    \begin{lstlisting}[language=JavaScript]
+    const boardAISchema = new Schema({
+    board: [],
+    score: Number,
+    movecount: Number,
+    code: String,
+    ai: {type: Boolean, default: false},
+    aiBoard: [{type: [], default: []}],
+    aiScore : {type: Number, default: 0},
+    consumedDisadvantages : [{type: [], default: []}],
+    date: { type: Date, default: Date.now }
+    });
+    \end{lstlisting}
+
+    \item \textbf{BackupBoard} y \textbf{BackupBoardAI}: Son dos esquemas idénticos a los anteriores respectivamente. Sirven como copias de seguridad para la base de datos, ya que tenemos funciones con la capacidad de borrado y cualquier problema podría llevar a la eliminación de todos los datos del almacenados.
+
+\subsubsection{dataAccess.js}
+
+Tenemos una clase estática de JavaScript que actúa como nuestro acceso a datos para la BD de MongoDB. La clase implementa varias funciones estáticas para acceder y almacenar datos, y otras funciones auxiliares.
+
+Todas las funciones del dataAccess dependen de la función \texttt{codeExists(code)}. Que dado un código, buscará en qué colección está (\textit{Board o BoardAI}). Además de eso, si el código existe en ambas colecciones (un error), llamará a otra función (\texttt{purgeCode(code)}) que se encarga de tratar el problema.
+
+Esto es un ejemplo de la mantenibilidad automática de nuestra base de datos. La intervención directa del gestor de base de datos solo es necesaria en casos de fallos directos en la BD.
+
+Otra función interesante es \texttt{generateCode()}. Nuestra aplicación, al \textbf{no} tener usuario y contraseña, almacena los documentos con un \textbf{código de 5 caracteres}. Para que el código sea más legible, llamamos a una API (‘\texttt{random-word-api.herokuapp.com}’) que genera una palabra en inglés de 5 letras.
+
+Este código es nuestra “\textbf{clave primaria}”, y lo escribimos entre comillas porque Mongo no lo considera directamente como una clave primaria. Pero esta clave será única así que sirve de manera identificativa para el resto de funciones de dataAcess.js.
+
+La función \texttt{save()} se llama cada tres movimientos del usuario. Esto asegura que cuando la BD esté separada del servidor de \textit{back-end}, las comunicaciones no sean muy frecuentes para evitar problemas de rendimiento.
+
+La función \texttt{cleanup()} se llama cada vez que se crea un nuevo juego, ya sea de un jugador o multijugador. La función elimina todas los juegos con \textbf{menos de tres movimientos} y todas las tablas con \textbf{más de tres meses de antigüedad}. En la base de datos no debería de haber juegos con menos de tres movimientos como acabamos de mencionar, pero lo revisamos como redundancia.
+
+Para realizar pruebas, hemos utilizado un servicio de MongoDB alojado en \texttt{martinh.info:27017}. Al tener un procesador virtualizado, se tuvo que realizar varios apaños para poder alojarlo correctamente y debido a ello, se utilizó una versión de MongoDB anterior (4.4.29). Ver el apartado 'docker' para saber como lo hemos gestionado en producción.\ref{MongoDBDocker}
+
+\end{itemize}
+
+\subsection{Gestión de Rutas con Express}
+
+En el desarrollo del back-end se ha utilizado el framework \emph{Express} dentro del lenguaje Node.js, siguiendo una arquitectura basada en routers. Cada router agrupa un conjunto de rutas relacionadas y proporciona una separación entre la lógica de negocio y el enrutador.
+
+Se han creado tres enrutadores:
+\begin{itemize}
+    \item \textbf{singleplayer.js} - Principal controlador del modo \emph{un jugador}. Contendrá las rutas para crear una nueva partida y para hacer movimientos. Utilizará la lógica de negocio y hará de intermediario entre el cliente y la base de datos.
+    \item \textbf{multiplayer.js} - Principal controlador del modo \emph{contra la IA}. Contendrá rutas parecidas a las del modo \emph{"un jugador}, además de las necesarias para poder comunicarse con la IA y para poder aplicar desventajas.
+    \item \textbf{load.js} - Principal encargado de \emph{restaurar} las partidas guardadas en la base de datos. Se comunicará con la capa de acceso a datos.
+\end{itemize}
+
+Estos tres enrutadores tendrán, además, que establecer correctamente las variables de sesiones de usuario, hacer copias de seguridad en la base de datos, controlar los códigos de error de las librerías y de la base de datos y unos cuantos detalles más.
+
+En cuanto a cómo se guarda un juego, se ha definido un formato \emph{JSON} que se guardará en la variable de sesión del usuario. De esta forma, el servidor tendrá una visión en todo momento de la partida del usuario, pero teniendo el inconveniente de que el usuario no podrá jugar dos partidas a la vez. 
+
+    \begin{lstlisting}[title = {JSON enviado desde el servidor para un movimiento en multijugador.}, frame = trBL , firstnumber = last , breaklines=true, escapeinside={(*@}{@*)}]
+    let resjson = {
+        "board": b.board,
+        "iaboard": bAI.board,
+        "score": b.score,
+        "iascore": bAI.score,
+        "iaPathGeneration" : parsedData.iaPathGeneration,
+        "consumedDisadvantages": parsedData.consumedDisadvantages,
+        "iaResult" : aiResu
+    };
+    \end{lstlisting}
+
+Para contrarrestar el inconveniente, cada 3 movimientos se guardará el juego en la base de datos. Se generará un código y se le proporcionará al usuario para que pueda restaurar la partida en un estado intermedio.
+
+\subsection{Uso de LLMs}
+
+Se nos propuso utilizar modelos LLM para jugar a nuestro juego. Muy pronto nos dimos cuenta que estos modelos no están hechos para este tipo de actividades y no podían procesar la información que le estábamos proporcionando. Decidimos optar por “guiarle” a la IA y darle los datos más procesados de antemano para que su decisión no fuese tan complicada.
+
+\subsubsection{Algoritmo de búsqueda de caminos}
+
+Decidimos darle a la IA los movimientos posibles directamente y que, \textbf{con contexto}, eligiese el camino más óptimo para ganar la partida. 
+
+El algoritmo está contenido en la función \texttt{findFirstPath()} que recibe el \textit{tablero}, el \textit{array de movimientos}, la \textit{fila}, la \textit{columna}, el \textit{camino} y la \textit{longitud necesaria}. La fila, la columna y el camino son necesarios para la recursividad pero al comienzo se llamarán con [0, 0, []], es decir, la fila inicial, la columna inicial y un camino vacío. Estos valores cambiarán a medida que la función entre en la matriz. Esta función devuelve el primer camino de la longitud pedida en esa fila y columna. Si no se encuentra ningún camino, devuelve \texttt{null}.
+
+Para el resto de filas y columnas tenemos \texttt{findSolutions} que acepta el \textit{tablero}, la \textit{matriz de movimientos} y la \textit{longitud necesaria}. Esta función recorre \textbf{la matriz entera}, buscando caminos de la longitud deseada para cada coordenada de la matriz. Si no encuentra solución para esa longitud, \textbf{empezará la búsqueda otra vez} con \texttt{length-1}, es decir, una longitud menor. Esto se repetirá hasta que se encuentre al menos un camino de longitud mayor a 3. Si no hay caminos de longitud mayor o igual a 3, significa que ya no hay más movimientos posibles. Esta función se usa también para comprobar si quedan más movimientos o acabar la partida.
+
+Con estas funciones (y otras varias auxiliares), le podemos proporcionar a la IA caminos con longitud a medida. Y elegirá una solución.
+
+\subsubsection{Contexto y optimización de tokens}
+
+En vez de pasar individualmente el contexto para cada pregunta, le pasamos el contexto al comienzo del ‘chain’ con un prompt inicial (que se iniciará cuando se inicialice el back-end). El prompt base es el siguiente:
+\vspace{5mm}
+
+
+\textit{"You are playing a connecting numbers game. The numbers are represented in a matrix.
+You have to connect a minimum of 3 numbers of the same value.
+You are restricted to only some possible movements along the matrix. 
+I will pass on an array of possible movements like this: "i,j" : [[a,b], [c,d]], ... where i is the row of the matrix and j is the column of the matrix. From i,j you can move in the directions displayed by [a,b] or where a is the difference in the "rows" (i variable) and b is the difference in the columns (j variable)  
+You must connect the most amount of numbers.
+Now, please choose one of the possible plays I will pass you and return the number that you selected. 
+Only respond with the number of the play you want to make. 
+Do not explicitly include the play number. 
+The response must be 1 digit long. 
+Do not be verbose. 
+Do not provide any explanations."}
+\vspace{5mm}
+
+
+Esto evita usar tokens para cada movimiento (consulta que le hagamos). Entonces, cuando haya que hacer un movimiento, se le pasará la matriz, la matriz de movimientos y los caminos posibles tal cual.
+
+Utilizamos varios modelos de IA gestionados por Groq, y utilizamos Langchain como interfaz para las peticiones. Groq tiene un límite de ‘tokens’ \ref{groqtokens}.
+
+
+\vspace{5mm}
+'En el contexto de los grandes modelos de lenguaje (LLM, por sus siglas en inglés), los tokens son las unidades de texto más pequeñas que el modelo procesa y genera. La tokenización es el proceso de dividir el texto de entrada en estas unidades más pequeñas.' \textit{Claude 3 Opus}
+
+\begin{figure}[h]
+\centerline{\includegraphics[scale=0.15]{img/groq.png}}
+\caption{Limites de tokens que establece Groq}
+\label{groqtokens}
+\end{figure}
+
+
+Nosotros utilizamos \texttt{llama3-70b-8192} y \texttt{gemma-7b-it}.
+
+Cuando la IA llega al límite de tokens, Langchain no devuelve un error, sino que espera a que haya tokens o peticiones libres para continuar. Al usuario le aparece una pantalla de espera.
+
+\subsubsection{Sistema de desventajas}
+
+Tenemos implementado un \textbf{sistema de desventajas} ya que la IA juega \emph{demasiado} bien con el algoritmo (o las guías) que le proporcionamos. Una de las desventajas es \textbf{degradar el modelo} que utiliza. Con esta función, se puede pasar automáticamente del modelo \verb|70b de Llama3| al \verb|7b de Gemma|. Una consecuencia es que la utilización de tokens se distribuye por modelos.
+
+Las otras dos desventajas también afectan a la IA. Una de ellas es la \textbf{limitación de la información} proporcionada. Para el resto de la partida, la IA solo podrá ver las primeras 3 filas y 3 columnas, pero no sabrá lo que hay en el resto del tablero. Las decisiones que tomará serán válidas pero a ciegas, y la partida podrá acabar por falta de movimientos si no lo gestiona bien. La última desventaja es la \textbf{limitación de la longitud de los caminos} proporcionados. En esta, la IA solo podrá realizar movimientos con una longitud acortada, limitando la puntuación que puede obtener. 
+
+Esta es la configuración inicial del chat:
+\begin{lstlisting}[language=JavaScript]
+const model = new ChatGroq({
+    apiKey: process.env.GROQ_KEY_1,
+    model: "llama3-70b-8192",
+  });
+  const model2 = new ChatGroq({
+    apiKey: process.env.GROQ_KEY_1,
+    model: "gemma-7b-it",
+  });
+
+const prompt = ChatPromptTemplate.fromMessages([
+    ["system", aitools.generateBasePrompt()],
+    ["human", "{input}"],
+]);
+\end{lstlisting}
+
+
+\vspace{5mm}
+Esta es la función que elige el modelo LLM:
+\begin{lstlisting}[language=JavaScript]
+function getChain(req) {
+    if (req...consumedDisadvantages.includes(3)) {
+        return prompt.pipe(model2);
+    }
+    return prompt.pipe(model);
+}
+\end{lstlisting}
+
+
+\subsection{Códigos de Error}
+
+Durante todo el proyecto se ha usado un sistema de \emph{códigos de error} para tratar mejor el intercambio de información entre capas y siempre obtener una visión concisa de lo que estaba pasando cuando algo iba (o va) mal. El documento se encuentra en la carpeta de \emph{docs/} dentro del proyecto. 
+
+\begin{tcolorbox}
+\begin{verbatim}
++------------+--------------------------------------------+
+|   Error    |                Descripción                 |
++------------+--------------------------------------------+
+| 257        | Movimiento ilegal (Dos números distintos)  |
++------------+--------------------------------------------+
+| 259        | No quedan más movimientos para la IA       |
++------------+--------------------------------------------+
+| 282        | Error petición API de generación de código |
++------------+--------------------------------------------+
+|            | Error al hacer 'load' desde la bd. El      |
+| 284        | código existe tanto para single como para  |
+|            | multiplayer. Se borrarán ambos.            |
++------------+--------------------------------------------+
+|            | La IA ha sido incapaz de escoger un número |
+| 302        | de los que se le han pasado, o no lo ha    |
+|            | devuelto de la manera correcta             |
++------------+--------------------------------------------+
+| 100        | Todo ha ido bien                           |
++------------+--------------------------------------------+
+\end{verbatim}
+\end{tcolorbox}
+\footnotesize{Extracto del documento codigoserror.txt}
+
+\subsection{Docker} \label{dockerpaquete}
+
+Como manera de compilación y ejecución del proyecto en producción, se ha usado \emph{Docker \cite{docker}} como plataforma todo-en-uno. Se ha optado por usar dos contenedores conectados entre sí por el fichero \emph{docker-compose.yml}
+
+En cuanto al primer contenedor, se ha decicido realizar una integración con el backend y el frontend. El \emph{back} es una aplicación express que tiene que escuchar en un puerto, es un servidor web. En cambio, el \emph{front} en React al ser compilado se transforma en unos ficheros html, css y javascript. En una primera aproximación se pensó en tener dos servidores web, uno para servir los archivos del \emph{front} y otro para servir los archivos del \emph{back}. Siguiendo el principio \emph{KISS}\cite{kissp} se optó por hacerlo más sencillo y combinarlo todo en un único servidor web. Entonces, en el Dockerfile se compila primero el frontend y luego se copia a una carpeta especial del backend donde el servidor express \emph{servirá} estos archivos estáticos.
+
+    \begin{lstlisting}[title = {Dockerfile-frontback}, frame = trBL , firstnumber = last , breaklines=true, escapeinside={(*@}{@*)}]
+    # Stage 1: Build the React application
+    FROM node:20-alpine AS build
+    
+    WORKDIR /app
+    COPY ./front ./
+    ARG VITE_BACKEND_URL
+    ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
+    RUN npm install -save
+    RUN npm run build
+    
+    # Stage 2: Serve back-end with Express
+    FROM node:20-alpine
+    
+    WORKDIR /app
+    
+    COPY --from=build /app/dist ./public
+    
+    COPY ./back ./
+    RUN npm install --omit=dev
+    
+    # Start the Express application
+    CMD ["npm", "run", "prod"]
+    \end{lstlisting}
+
+
+El segundo contenedor se refiere a la base de datos MongoDB\label{MongoDBDocker}. MongoDB es un SGBD excelente, pero su puesta en marcha requiere una configuración y conocimiento previo extensos. En primer lugar, para poder crear un usuario y una contraseña en la imagen de MongoDB de Docker \cite{dockermongo} hace falta establecer unas variables de entorno y pasarle un \emph{script} de "creación de usuario" reafirmando (sí, reafirmando) esas mismas variables de entorno que se han declarado.
+
+    \begin{lstlisting}[title = {Script inicial init-mongo.sh}, frame = trBL , firstnumber = last , breaklines=true, escapeinside={(*@}{@*)}]
+    #!/bin/bash
+    mongo <<EOF
+    use hadsagono
+    
+    db.createUser({
+      user: "${MONGO_INITDB_ROOT_USERNAME}",
+      pwd: "${MONGO_INITDB_ROOT_PASSWORD}",
+      roles: [{
+        role: 'readWrite',
+        db: 'hadsagono'
+      }]
+    });
+    
+    EOF
+
+    \end{lstlisting}
+Además, una vez se ha conseguido crear un usuario y una contraseña, dependiendo de la arquitectura que se utilice, se puede encontrar un problema con la CPU en entornos de virtualización \cite{mongodbbug}. Un VPS con una CPU virtualizada sin AVX con Proxmox es justo el entorno en el que se ha desplegado la aplicación (\ref{extraselfhost}), lo cual ha implicado adaptar el programa entero (capa de acceso a datos y docker) para poder usar una versión antigua (pero todavía soportada en cuanto a seguridad) de MongoDB.
+
+Por último, a modo de protección, se ha decidido no exponer la base de datos en el propio servidor (no redirigir los puertos) y depender únicamente de las redes internas de Docker para la comunicación. Entonces, la \textbf{única} manera de acceder a MongoDB es pasando por la aplicación desplegada.
+
+Con todos estos ajustes, el \emph{docker-compose.yml} ha quedado así:
+
+    \begin{lstlisting}[title = {.}, frame = trBL , firstnumber = last , breaklines=true, escapeinside={(*@}{@*)}]
+services:
+  back-front-express:
+    build:
+      dockerfile: Dockerfile-frontback
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      - MONGO_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@database:27017/hadsagono
+      - GROQ_KEY_1=${GROQ_KEY_1}
+      - PORT=${PORT}
+    depends_on:
+      - database
+    restart: unless-stopped
+    networks:
+      - public
+      - internal
+
+  database:
+    image: mongo:4.4.29
+    volumes:
+      - ./mongodata:/data/db
+      - ./db/init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: hadsagono
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    command: mongod --auth --port 27017
+    restart: unless-stopped
+    networks:
+      - internal
+
+networks:
+  public:
+    driver: bridge
+    internal: false
+  internal:
+    driver: bridge
+    internal: true
+    \end{lstlisting}
+
+\pagebreak
+\section{Tareas adicionales}
+
+\subsection{Singleplayer}
+
+El modo \emph{un jugador} para nosotros no fué un extra a añadir, sino una base desde donde partir. Empezamos realizando esta parte para obtener y conseguir toda la lógica necesaria para tener un juego \emph{que funcionara}, para luego implementar el modo multijugador \emph{vs IA}.
+
+\subsection{Aplicación pública en internet} \label{extraselfhost}
+Realizando unas modificaciones (introducidas en el apartado de Docker \ref{dockerpaquete}) y siguiendo la guía de \emph{self-hosting} \ref{selfhosting} se ha abierto una instancia de la aplicación en internet, bajo el dominio \href{https://hads.nico.eus}{hads.nico.eus} . Esta ejecución se encuentra en una máquina virtualizada VPS (sin soporte para  AVX) en Núremberg (Alemania), bajo el proveedor de servicios \href{https://netcup.eu}{netcup}, con 4 vCores, 4GB de RAM y con una tarjeta de red de 1Gb.
+
+
+\subsection{Compatibilidad con dispositivos móviles}
+
+Como estaba subido en el sitio web mencionado con anterioridad, se decidió por invertir un poco de tiempo en añadir esta nueva funcionalidad si se veía factible y no generaba un aumento de tiempo excesivo. Para ello, hubo que realizar nuevos eventos para los gestos que se pueden realizar con la pantalla táctil, ya que los eventos de ratón no sirven para pantallas táctiles. Por lo que además de los eventos \emph{onMouseDown}, \emph{onMouseEnter} y \emph{onMouseUp} hubo que realizar \emph{onTouchStart}, \emph{onTouchMove} y \emph{onTouchEnd} tanto para singleplayer como para cuando se jugaba contra la IA. Además, hubo que realizar pequeñas modificaciones en el CSS para cuando el tamaño de la pantalla era inferior a 768px.
+
+\pagebreak
+
+\section{Dedicación Horaria}
+
+En cuanto a la dedicación horaria al proyecto, desde el equipo de desarrollo se ha intentado acotar el alcance del proyecto y no implementar demasiadas características \emph{extra} para poder llegar a la estimación del proyecto de $\sim$ 50 horas por persona. Se detalla en el cuadro \ref{tab:dedic} la dedicación acumulada y por persona real del trabajo de realización del proyecto. Por \emph{horas dentro y fuera de clase} se refiere al trabajo de implementación, mientras que también se expone un apartado para las horas de redacción del informe
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c||c|c|c||c|}
+     \hline
+       Miembro & h Dentro de Clase & h Fuera de Clase & h Informe & Total \\ [0.5ex] 
+        \hline\hline
+        Nicolás & 12 & 43 & 5 & 60 \\
+        Asier & 13 & 40 & 5 & 58 \\
+        Martín & 14  & 39 & 4 & 57 \\
+        \hline \hline
+        Total  & 39  & 122 & 14 & 175 \\ [1ex] 
+        \hline
+    \end{tabular}
+    \caption{Dedicacición Horaria, en Horas, por Persona}
+    \label{tab:dedic}
+\end{table}
+
+Como se puede observar, se ha superado el objetivo de 50 horas de dedicación, pero creemos que las horas extra invertidas han supuesto una mejora muy sustancial en la calidad del proyecto. Ese tiempo \emph{extra} invertido ha sido para poder arreglar detalles y perfeccionar la jugabilidad y accesibilidad del juego.
+
+Además, se ha sobreestimado la escritura del informe y se han dedicado más horas de las estimadas.
+
+\pagebreak
+
+\section{Conclusiones}
+
+\subsection{Reflexión y conclusiones sobre el trabajo}
+
+En primer lugar, tenemos que destacar el uso de tecnologías punteras y actuales para implementar tanto el frontend (React y Vite) como el backend (Node.js, Express, MongoDB). Además, la elección de una arquitectura desacoplada, con una API que comunica entre cliente y servidor, da mucha flexibilidad al sistema.
+
+Nos ha parecido que la integración de modelos de lenguaje (LLMs) en el proyecto para implementar un oponente IA es un aspecto muy novedoso. A pesar de las limitaciones actuales de los LLMs para procesar las reglas del juego directamente, proporcionar movimientos ya calculados entre los que la IA debe decidir, ha sido una solución eficiente. Nos imaginamos que en un futuro, una IA podría jugar a este juego sin ayuda humana.
+
+Estamos orgullosos de haber desarrollado un juego accesible y compatible con dispositivos móviles. Además, el sistema de desventajas hace que el juego no sea tan repetitivo a largo plazo, y mantiene al usuario entretenido en todo momento.
+
+La gestión del proyecto ha sido adecuada. Con un enfoque ágil-iterativo, nos hemos asegurado de que todos los cambios en los requisitos y funcionalidades adicionales se hayan implementado sin dificultades. La desviación horaria ha afectado a nuestro proyecto de manera positiva, permitiéndonos mejorar y arreglar funcionalidades.
+
+Creemos que HADSagono es un proyecto muy completo y demuestra de manera práctica los conocimientos aprendidos tanto en la asignatura de HADS, como en otras asignaturas de la carrera. Al estar implementado de manera muy modular, creemos que está aplicación tiene mucho potencial en el futuro \ref{potencial}, si se quisiera expandir.
+
+
+\subsection{Lecciones Aprendidas}
+
+Para el desarrollo del frontend se ha utilizado Vite y React. Ha sido la primera vez que se ha trabajado con estas herramientas y gracias a los LLM y su asistencia la curva de aprendizaje ha sido menor y más rápida.
+
+Hemos aprendido que las LLMs tienen usos muy particulares. Aunque la IA haya sido una gran ayuda para entender nuevas herramientas, todavía falta capacidad de razonamiento para razonar algunas cosas o jugar a juegos.
+
+Realizar el proyecto ha reforzado la lección de la modularidad del código. Pasar el juego de un solo jugador a multijugador no fue un salto tan grande como pensábamos y pone en valor las buenas prácticas aprendidas durante la formación.
+
+\subsection{Mejoras a Futuro} \label{potencial}
+
+De cara a realizar un trabajo similar en un futuro, se destacaría la importancia de revisitar la investigación del estado actual de los modelos LLM. A fecha de redacción de esta memoria, no se ha podido pasarle el juego (junto con sus reglas) \emph{tal cual} a ningún modelo LLM y que éste produciese una secuencia válida de movimientos. Se ha tenido que \emph{guiar} de cierta forma dando posibles soluciones al LLM. Aún así, dada la rápida evolución de los LLMs, se cree posible que en un futuro esta tarea sí pueda ser realizada y completada exitosamente, ahorrando tiempo de cómputo en el backend y produciendo jugadas menos predecibles.
+
+Además, en un futuro se podría revisitar el algoritmo de generación de números, para implementar unos \emph{niveles de dificultad}. Se podría implementar una progresión en la que el jugador va adquiriendo más y más experiencia en el juego según se van haciendo más difíciles los niveles.
+
+Como posible expansión del juego también cabría considerar un modo \emph{trampas} en el cual el cliente pudiese calcular la mejor jugada posible dado un tablero y se la mostrase al jugador.
+
+Además, en cuanto al diseño visual o la jugabilidad, siempre hay aspectos en los que el juego puede mejorar añadiendo nuevos estilos o nuevos modos de juego. como ejemplo, a futuro se pueden añadir tableros más grandes, o que el usuario elija un tamaño (17*18 por ejemplo), ya que de la manera que implementamos el código es posible tanto en el backend con la generación de hexágonos o la verificación de movimientos legales, y en el aspecto visual del frontend.
+
+En todo caso, las posibilidades de expansión son infinitas y el propio equipo de desarrollo tienen bastantes ideas en caso de que el proyecto sea revisitado.
+\pagebreak
+% ---- Bibliography ----
+% They are contained on the "refs.bib" file.
+% Choose the appropiate sources (papers) and
+% gets its bibTeX citation paragraph.
+% Then paste it in the "refs.bib" file.
+% For a reference to appear in this section,
+% it must be \cite 'd in the text.
+%
+\bibliographystyle{splncs04}
+\bibliography{refs}
+
+\pagebreak
+
+\appendix
+
+\section{Enlaces} \label{enlaces}
+
+El código fuente de la aplicación se encuentra desplegado en el repositorio de github \href{https://github.com/martinh13/hadsagono}{martinh13/hadsagono}.
+
+Además, una instancia \emph{demo} de la aplicación se encuentra desplegada en la dirección web \href{https://hads.nico.eus/}{hads.nico.eus}.
+
+Para facilitar el desarrollo en vscode, se encuentra disponible un paquete de extensiones en el siguiente \href{https://marketplace.visualstudio.com/items?itemName=nicoagr.hadsagono-vscodeextensions}{enlace} o buscando \verb|hadsagono| en la pestaña de extensiones del propio visual studio code.
+
+
+\section{Ejecución en Entorno de Desarrollo}
+
+Instrucciones necesarias para ejecutar y modificar el proyecto en un entorno de desarrollo.
+
+\subsection{Frontend}
+
+Todo el desarrollo relacionado con esta sección ocurre en la carpeta \emph{front}. El framework que se está utilizando es \href{https://vitejs.dev/}{Vite-React} (JavaScript).
+\begin{itemize}
+    \item Primero, se necesitará abrir una terminal y ejecutar el siguiente comando para instalar todas las dependencias necesarias.
+    \begin{lstlisting}[title = {/front/}, frame = trBL , firstnumber = last , breaklines=true, escapeinside={(*@}{@*)}]
+    npm install -save
+    \end{lstlisting}
+    \item Los archivos fuente del frontend de React se encuentran en la carpeta "front/src".
+    \item Para ejecutar el servidor de desarrollo (que, por defecto escuchará en el puerto 5173), deberás ingresar en la terminal.
+    \begin{lstlisting}[title = {/front/}, frame = trBL , firstnumber = last , breaklines=true, escapeinside={(*@}{@*)}]
+    npm run dev
+    \end{lstlisting}
+\end{itemize}
+
+\subsection{Backend}
+
+Para el backend, la aplicación se basa en una base de datos mongodb, el framework \emph{express} y en llamadas a la API para del proveedor de LLMs \emph{Groq}.
+\begin{enumerate}
+    \item Primero, habrá que abrir una terminal y ejecutar el siguiente comando para instalar todas las dependencias de node
+    \begin{lstlisting}[title = {/back/}, frame = trBL , firstnumber = last , breaklines=true, escapeinside={(*@}{@*)}]
+    npm install -save
+    \end{lstlisting}
+    \item Luego, habrá que renombrar el archivo ".env.example" a ".env".
+    \item Se seberá después obtener una clave API del proveedor de LLMs \href{https://console.groq.com}{\emph{Groq}} y se deberá insertar en el archivo ".env".
+    \item La aplicación también necesitará una base de datos \emph{mongodb} para guardar las partidas. La base de datos \textbf{deberá} tener una base de datos creada llamada "hadsagono". La aplicación creará por sí misma tres colecciones: "boards", "boardais" y "backupboards", así que habrá que asegurarse de que no haya colisiones de nombres. Se deberá proporcionar una \textbf{URI de conexión} de mongo en el archivo ".env". Si se encuentra disponible una instancia de mongodb a mano para el entorno de desarrollo, se puede \href{https://www.mongodb.com/try/download/community}{self-hostear} una en la máquina local.
+    \item Entonces, para después ejecutar el servidor de desarrollo (que, por defecto escuchará en el puerto 3642), se deberá ingresar en la terminal
+    \begin{lstlisting}[title = {/back/}, frame = trBL , firstnumber = last , breaklines=true, escapeinside={(*@}{@*)}]
+    npm run start
+    \end{lstlisting}
+    
+\end{enumerate}
+
+\subsection{IDE Recomendado}
+
+Se puede usar el IDE que se desee para desarrollar el proyecto ya que la aplicación en sí no necesita ningún entorno de desarrollo \emph{sofisticado} u personalizado en un sentido específico. Se trata de un desarrollo javascript para que el que es necesario abrir algunas terminales. Sin embargo, nosotros hemos utilizado y recomendamos utilizar visual studio code \cite{vscode} para facilitar y hacer la experiencia de usuario mucho más cómoda.
+De cara a poder seguir la recomendación, hemos publicado nuestras extensiones recomendadas para vscode para trabajar en el proyecto en un \href{https://marketplace.visualstudio.com/items?itemName=nicoagr.hadsagono-vscodeextensions}{paquete de extensiones en la marketplace de visualstudio}. De esta manera, con un solo clic ya se encontraría el proyecto listo para su desarrollo.
+
+\section{Deployment en Producción}
+
+Instrucciones necesarias para compilar y desplegar el proyecto en un entorno de desarrollo.
+
+\subsection{\emph{Self-Hosting}} \label{selfhosting}
+
+Esta aplicación está diseñada para ser \emph{construida y ejecutada} a través de docker. No se puede proporcionar una imagen de docker \emph{preconstruida}porque algunas claves de API y otros parámetros de configuración deben ajustarse de antemano. Se recomienda tener al menos 3GB de espacio de almacenamiento en el servidor y se asume cierto conocimiento de administración de sistemas. Estos son los pasos para el autohospedaje de \emph{hadsagono}:
+
+\begin{enumerate}
+    \item Primero, se deberá clonar el repositorio:
+    \begin{lstlisting}[title = {@bash}, frame = trBL , firstnumber = last , breaklines=true, escapeinside={(*@}{@*)}]
+    git clone https://github.com/Martinh13/HADSagono.git
+    \end{lstlisting}
+    \item Para después hacer un \emph{cd} a la carpeta clonada.
+    \item Luego, cambia el nombre del archivo ".env.example" a ".env".
+    \item Abre el archivo ".env" con tu editor de texto favorito. Debes proporcionar una clave de API del proveedor de LLMs \href{https://console.groq.com}{groq} para la función de partidas multijugador. También puedes configurar el puerto de la aplicación web expuesta y el nombre de usuario y la contraseña de la base de datos mongodb que se generará.
+    \item Habrá que instalar el \href{motor de docker}{https://docs.docker.com/engine/install/} en el servidor si aún no está disponible.
+    \item Cuando estén todas las variables de entorno configuradas correctamente en el fichero ".env", simplemente se puede ejecutar
+    \begin{lstlisting}[title = {/hadsagono/ : @bash}, frame = trBL , firstnumber = last , breaklines=true, escapeinside={(*@}{@*)}]
+    docker-compose up -d
+    \end{lstlisting}
+    \item ¡Ahora la aplicación estará ejecutándose en el puerto que se ha especificado!
+
+\end{enumerate}
+
+\subsection{Extras Recomendados}
+\begin{itemize}
+    \item Si se está desplegando la aplicación en un servidor, lo más probable es que se quiera que la aplicación persista y se inicie automáticamente cuando se reinicie la máquina. En caso de que se esté ejecutando Linux y se gestione los procesos con \emph{systemctl}, simplemente se puede ejecutar
+\begin{lstlisting}[title = {@bash}, frame = trBL , firstnumber = last , breaklines=true, escapeinside={(*@}{@*)}]
+        sudo systemctl enable docker
+    \end{lstlisting}
+    \item Se recomienda que se ejecute la aplicación web detrás de un \emph{reverse proxy} (como \href{https://nginx.org}{nginx}) para que se pueda proteger la aplicación a través de TLS/SSL y para tener más control sobre el servidor web. Un ejemplo de configuración de dominio de nginx para una aplicación que se ejecuta en el puerto 3456 en una IP \emph{[MACHINE\_IP]} y con un nombre de host \emph{[DOMAIN]} podría ser:
+    
+    \begin{lstlisting}[title = {/etc/nginx/conf.d/domains/[DOMAIN].ssl.conf}, frame = trBL , firstnumber = last , breaklines=true, escapeinside={(*@}{@*)}]
+        server {
+        listen      [MACHINE_IP]:443 ssl;
+        server_name [DOMAIN] ;
+        error_log   /path/to/your/error.log error;
+
+        ssl_certificate     /path/to/ssl/cert.pem;
+        ssl_certificate_key /path/to/ssl/cert.key;
+        ssl_stapling        on;
+        ssl_stapling_verify on;
+
+        # TLS 1.3 0-RTT anti-replay
+        if ($anti_replay = 307) { return 307 https://$host$request_uri; }
+        if ($anti_replay = 425) { return 425; }
+
+        location ~ /\.(?!well-known\/|file) {
+                deny all;
+                return 404;
+        }
+
+        location / {
+                proxy_pass http://127.0.0.0:3456;
+        }
+
+        location /error/ {
+                alias /wherever/you/have/your/document_errors/;
+        }
+
+        proxy_hide_header Upgrade;
+
+        include /path/to/your/nginx.ssl.conf_*;
+}
+    \end{lstlisting}
+    \href{https://pastebin.com/raw/8jdqGXct}{\footnotesize{(Link al archivo en pastebin)}}
+    
+\end{itemize}
+
+
+\end{document}
