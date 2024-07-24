@@ -5,9 +5,26 @@ let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 let session = require('express-session');
 let cors = require('cors');
+let helmet = require('helmet');
+let hpp = require('hpp');
+const { xss } = require('express-xss-sanitizer');
+let compression = require('compression');
 
 
 const app = express();
+
+app.disable('x-powered-by');
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrcAttr: ["'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "'unsafe-inline'"],
+    },
+  },
+}));
 
 app.use(cors({credentials: true
     ,origin: 'http://localhost:5173'
@@ -17,6 +34,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(hpp());
+app.use(xss());
 
 // Sesiones
 const sessinfo = {
@@ -31,6 +50,7 @@ app.use(session(sessinfo));
 // se pueden crear en la carpeta views
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.use(compression());
 
 
 let singleRouter= require('./routers/singleplayer');
